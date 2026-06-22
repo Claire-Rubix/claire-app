@@ -184,7 +184,7 @@
   <canvas id="confetti"></canvas>
   <audio id="bgm" loop preload="none"></audio>
   <div class="topbar">
-    <div class="brand"><img src="LN/logo-rubix.png" alt="RUBIX" style="height:30px;border-radius:6px" onerror="this.outerHTML='<span class=\'dot\'></span> RUBIX'"> <span class="cd" id="cd"></span></div>
+    <div class="brand"><div style="display:flex;flex-direction:column;line-height:1.05"><img src="LN/logo-rubix.png" alt="RUBIX" style="height:30px;border-radius:6px" onerror="this.outerHTML='<span class=\'dot\'></span> RUBIX'"><span style="font-size:11px;letter-spacing:1.5px;color:#FFD700;font-weight:bold;margin-top:3px">THE LAST TRAIL</span></div> <span class="cd" id="cd"></span></div>
     <div class="ctrls">
       <button class="pill" id="restartBtn" title="Recommencer">🔄</button>
       <button class="pill" id="musicBtn" title="Musique">🔇</button>
@@ -199,7 +199,7 @@
 /* =========================== CONFIG =========================== */
 const CONFIG = {
   portrait:"LN/Laurina.jpg",
-  password:"",   // <-- mets "ClaireRubix!" pour exiger un mot de passe (la page /#mot reste libre)
+  password:"LAURINA2026",   // code d'acces au JEU (surprise). La page /#mot reste libre (sans code).
   introVideo:"LN/Test.mp4",
   cagnotteURL:"",
   deadline:"2026-07-08T23:59:59",
@@ -402,7 +402,7 @@ $("#lightbox").onclick=()=>$("#lightbox").classList.remove("on");
 function faceImg(path){return `<img src="${src(path)}" onerror="this.style.display='none'">`;}
 
 /* =========================== ROUTER =========================== */
-function gateOK(){return !CONFIG.password||location.hash==="#mot"||S.view==='addword'||sessionStorage.getItem("tl_ok")==="1";}
+function gateOK(){return S.motMode||!CONFIG.password||S.view==='addword'||sessionStorage.getItem("tl_ok")==="1";}
 function showGate(){
   stage.innerHTML=`<div class="card" style="max-width:420px;margin:30px auto;text-align:center">
     <span class="kicker">🔒 Accès</span><h2>Mot de passe</h2>
@@ -413,6 +413,7 @@ function showGate(){
   $("#gok").onclick=tryp;$("#gpw").addEventListener("keydown",e=>{if(e.key==="Enter")tryp();});$("#gpw").focus();
 }
 function render(){
+  if(location.hash==='#mot'){S.motMode=true;S.view='addword';}   // visiteur "mot" : verrouille sur le formulaire, jamais le jeu
   if(!gateOK())return showGate();
   pickMusic(S.view);
   if(S.view==='intro')return intro();
@@ -904,15 +905,16 @@ function getBest(){try{return +localStorage.getItem('tl_best')||0}catch(e){retur
 function setBest(v){try{localStorage.setItem('tl_best',v)}catch(e){}}
 async function saveScore(rec){try{await fetch('/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});}catch(e){}}
 function addword(){stage.innerHTML=`<div class="card"><span class="kicker">💌</span><h1>${t('awTitle')}</h1>
+  ${S.motMode?`<p class="muted" style="margin-top:-4px">${lang==='fr'?'Laisse un petit mot à Laurina 💛 Elle le découvrira à la fin de son aventure.':'Leave a little note for Laurina 💛 She will discover it at the end of her adventure.'}</p>`:''}
   <label class="muted">${t('awName')}</label><input type="text" id="awn">
   <label class="muted" style="display:block;margin-top:12px">${t('awMsg')}</label>
   <textarea id="awm" style="width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:1em;min-height:110px"></textarea>
   <label class="muted" style="display:block;margin-top:12px">${t('awScore')} : <b id="awsv">10</b>/10</label>
   <input type="range" id="aws" min="0" max="10" value="10" style="width:100%">
   <div id="awfb" style="margin-top:12px;font-weight:bold"></div>
-  <div class="row"><button class="btn" id="awsend">${t('awSend')}</button><button class="btn ghost" id="awback">${t('awBack')}</button></div></div>`;
+  <div class="row"><button class="btn" id="awsend">${t('awSend')}</button>${S.motMode?'':`<button class="btn ghost" id="awback">${t('awBack')}</button>`}</div></div>`;
   $("#aws").oninput=e=>$("#awsv").textContent=e.target.value;
-  $("#awback").onclick=()=>{S.view=(firstOpenIdx()===-1)?"finish":"map";render();};
+  const bk=$("#awback");if(bk)bk.onclick=()=>{S.view=(firstOpenIdx()===-1)?"finish":"map";render();};
   $("#awsend").onclick=async()=>{const who=$("#awn").value.trim(),note=$("#awm").value.trim(),score=+$("#aws").value;const fb=$("#awfb");
     if(!who||!note){fb.style.color="var(--bad)";fb.textContent=t('awEmpty');return;}$("#awsend").disabled=true;
     try{await addMot({who,note,score});fb.style.color="var(--ok)";fb.textContent=t('awThanks');burst(22);$("#awn").value="";$("#awm").value="";setTimeout(()=>{$("#awsend").disabled=false;},800);}
@@ -945,9 +947,10 @@ function updateCountdown(){const cd=$("#cd");if(!cd)return;let d=new Date(CONFIG
 
 /* =========================== boot =========================== */
 initMusic();
-document.addEventListener("pointerdown",()=>toggleMusic(true),{once:true});
 if(location.hash==="#clear"){try{localStorage.removeItem('mots_laurina');alert('Notes locales effacées.');}catch(e){}location.hash='';}
-if(location.hash==="#mot")S.view="addword";
+if(location.hash==="#mot"){S.motMode=true;S.view="addword";}
+if(S.motMode){['restartBtn','musicBtn','presBtn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none';});}
+else document.addEventListener("pointerdown",()=>toggleMusic(true),{once:true});
 setLang("fr");render();updateCountdown();setInterval(updateCountdown,1000);
 </script>
 </body>
