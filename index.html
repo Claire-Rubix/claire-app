@@ -349,6 +349,7 @@ const I18N={
     cnpsSub:"Pour une fois, c'est TOI qu'on évalue. Note collective :",cnpsScoreWord:"sur 10 : promotrice à vie 💛",
     cnpsLetters:"Tes lettres à ouvrir 💌",cnpsOpenHint:"Clique sur une enveloppe pour lire le mot.",cnpsEmpty:"Les mots de tes collègues apparaîtront ici. 💌",
     cagnotte:"La cagnotte 🎁",replay:"Refaire le trail",galleryTitle:"Tous les souvenirs",timeUp:"⏱️ Temps écoulé !",printBook:"Imprimer le livre 📖",
+    bestLbl:"Meilleur score",newRec:"🏆 Nouveau record !",
     awBtn:"✍️ Ajouter un mot",awTitle:"Laisse un mot doux à Laurina",awName:"Ton prénom",awMsg:"Ton petit mot",awScore:"Ta note cNPS",
     awSend:"Envoyer 💌",awBack:"← Retour",awThanks:"Merci ! Ton mot apparaîtra à la fin du trail de Laurina. 💛",awErr:"Oups, envoi impossible. Réessaie.",awEmpty:"Écris au moins ton prénom et un petit mot.",
     introSkip:"Passer l'intro ▶︎",introStart:"Commencer l'aventure 🥾",
@@ -368,6 +369,7 @@ const I18N={
     cnpsSub:"For once, YOU are the one being rated. Collective score:",cnpsScoreWord:"out of 10: promoter for life 💛",
     cnpsLetters:"Your letters to open 💌",cnpsOpenHint:"Click an envelope to read the note.",cnpsEmpty:"Your colleagues' words will appear here. 💌",
     cagnotte:"The gift fund 🎁",replay:"Run it again",galleryTitle:"All the memories",timeUp:"⏱️ Time's up!",printBook:"Print the memory book 📖",
+    bestLbl:"Best score",newRec:"🏆 New record!",
     awBtn:"✍️ Add a word",awTitle:"Leave a sweet word for Laurina",awName:"Your first name",awMsg:"Your little note",awScore:"Your cNPS score",
     awSend:"Send 💌",awBack:"← Back",awThanks:"Thank you! Your note will appear at the end of Laurina's trail. 💛",awErr:"Oops, couldn't send. Try again.",awEmpty:"Write at least your first name and a note.",
     introSkip:"Skip intro ▶︎",introStart:"Start the adventure 🥾",
@@ -820,6 +822,9 @@ function ravitoCatch(){
 function finish(){
   bigBurst();const R=CONFIG.ravitos;
   const MAX=R.length*1000;const pct=Math.min(100,Math.round(S.total/MAX*100));
+  const prevBest=getBest();const isRec=S.total>prevBest;const best=Math.max(prevBest,S.total);
+  if(isRec)setBest(S.total);
+  saveScore({who:'Laurina',total:S.total,pct,km:S.km,steps:Object.keys(S.done).length});
   const rank=pct>=90?(lang==='fr'?'🏆 Légende du trail':'🏆 Trail legend'):pct>=70?(lang==='fr'?'⛰️ Traileuse confirmée':'⛰️ Seasoned trailer'):pct>=50?(lang==='fr'?'🏃 Bonne grimpeuse':'🏃 Good climber'):(lang==='fr'?'🥾 En rodage':'🥾 Warming up');
   const recap=R.map(x=>`<div class="msg"><div class="who">${esc(x.who)} · ${x.km} km · +${x.dplus} m</div><b>${S.scores[x.id]||0}</b> / 1000 pts</div>`).join("");
   const gallery=`<h2 style="margin-top:20px">${t('galleryTitle')}</h2><div class="gallery">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}" onclick="openLB(this.src)" onerror="this.style.display='none'">`).join("")}</div>`;
@@ -830,6 +835,7 @@ function finish(){
     <p style="margin:-2px 0 6px;letter-spacing:1px;font-weight:bold;color:var(--navy)">RUBIX · The Last Trail</p>
     <div class="scorebig">${S.total} <span style="font-size:.5em;color:#5b6b86">/ ${MAX} pts</span></div>
     <p class="muted" style="font-size:1.1em"><b style="color:var(--navy)">${pct}%</b> · ${rank}</p>
+    <p class="muted" style="font-size:1.02em">${isRec?'<b style="color:#e0457b">'+t('newRec')+'</b> · ':''}${t('bestLbl')} : <b style="color:var(--navy)">${best}</b> / ${MAX} pts</p>
     <p class="muted" style="font-size:1.05em">🗓️ <b style="color:var(--navy)">3 ans</b> chez Rubix (36 mois) · ${S.km} km parcourus ensemble</p>
     <p class="muted">+${S.dplus} m D+ · ${Object.keys(S.done).length}/${R.length} étapes</p>
     <div style="margin-top:24px;text-align:left">
@@ -875,6 +881,9 @@ async function getMots(){
   try{const r=await fetch(MOTS_API,{cache:'no-store'});if(!r.ok)throw 0;const data=await r.json();return (data||[]).map(x=>({who:x.who,fr:x.note,en:x.note,score:(x.score==null?10:x.score)}));}
   catch(e){return lsMots().map(r=>({who:r.who,fr:r.note,en:r.note,score:(r.score==null?10:r.score)}));}
 }
+function getBest(){try{return +localStorage.getItem('tl_best')||0}catch(e){return 0}}
+function setBest(v){try{localStorage.setItem('tl_best',v)}catch(e){}}
+async function saveScore(rec){try{await fetch('/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});}catch(e){}}
 function addword(){stage.innerHTML=`<div class="card"><span class="kicker">💌</span><h1>${t('awTitle')}</h1>
   <label class="muted">${t('awName')}</label><input type="text" id="awn">
   <label class="muted" style="display:block;margin-top:12px">${t('awMsg')}</label>
