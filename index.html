@@ -248,7 +248,7 @@ const CONFIG = {
       noteEN:"Thomas is a passionate maker of custom Rubik's Cubes. Of course he's the one handing you the puzzle!",
       revealFR:"Photo reconstituée ! 🧩 Bien joué.",revealEN:"Photo reassembled! 🧩 Well played." },
 
-    { id:"r3", who:"Eyosyas", face:"LN/Eyosyas.jpg", km:20, dplus:520, game:"photo",
+    { id:"r3", who:"Eyosyas", face:"LN/Eyosyas.jpg", km:20, dplus:520, game:"detail",
       photo:"LN/3554ddd1-b6cd-4021-b357-a05da86a4e55 (1).jpg",
       qFR:"Octobre 2025, escape game avec Eyosyas. Quel est le nom de l'escape game (l'enseigne) ?",
       qEN:"October 2025, escape game with Eyosyas. What's the name of the escape game (the brand)?",
@@ -299,7 +299,7 @@ const CONFIG = {
       tipFR:"On cherche le nom OFFICIEL de la promo, pas le surnom 😏",tipEN:"We want the OFFICIAL cohort name, not the nickname 😏",
       revealFR:"« DM Promo Sept 2023 » (alias « les nouveaux » 😄). Le début de l'aventure !",revealEN:"“DM Promo Sept 2023” (aka “the newbies” 😄). The start of the adventure!" },
 
-    { id:"r8", who:"Elsa", face:"LN/Elsa.jpeg", km:21, dplus:560, game:"photo",
+    { id:"r8", who:"Elsa", face:"LN/Elsa.jpeg", km:21, dplus:560, game:"detail",
       photo:"LN/31ecb4bd-7196-4f24-aa1c-87d962ed4102 (1).jpg",
       qFR:"Soirée de Noël de l'équipe. Que tient la collègue tout à gauche de la photo ?",
       qEN:"Team Christmas party. What is the colleague on the far left holding?",
@@ -584,14 +584,14 @@ function mcqPhoto(r){
     <span class="kicker">${t('challengeOf')} ${esc(r.asker||r.who)}</span>
     <div class="qsplit">
       <div class="qphoto"><div class="photowrap"><div class="chrono" id="chrono">${left}s</div>
-        <img id="mphoto" src="${src(r.photo)}" style="cursor:zoom-in" onclick="openLB(this.src,this.style.filter)" onerror="this.style.minHeight='150px'"></div></div>
+        <img id="mphoto" src="${src(r.photo)}" style="cursor:zoom-in" onclick="openLB(this.src,this.style.filter)" onerror="this.style.minHeight='150px'"></div>
+        ${r.noHint?'':copilotBox('raph',t('askRaph'))}</div>
       <div class="qbody">
         <div class="ptsbar"><div class="ptsfill" id="ptsfill" style="width:100%"></div></div>
         <div class="ptslabel"><span id="pts">${maxPts}</span> ${t('points')}</div>
         <h2 style="margin-top:6px">${r["q"+up()]}</h2>
         ${isBlur?`<p class="muted" style="margin-top:-4px">${t('answerNow')}</p>`:""}
         <div class="opts" id="opts">${ord.map(i=>`<button class="opt" data-i="${i}">${O[i]}</button>`).join("")}</div>
-        ${r.noHint?'':copilotBox('raph',t('askRaph'))}
       </div>
     </div>
     <div id="mfb"></div></div>`;
