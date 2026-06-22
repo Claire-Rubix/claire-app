@@ -22,12 +22,14 @@
   body.present{--fs:21px}
   .skybg{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,#0a1a48,#243a7a 30%,#5b6fa8 50%,#caa0a0 64%,#f0b070 74%,#ffd98c 86%)}
   .topbar{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 16px;color:#fff}
-  .brand{font-weight:bold;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:12px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+  .brand{display:flex;flex-direction:column;align-items:center;gap:7px;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+  .brand img{filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+  .bigtrail{font-size:clamp(1.3em,5vw,2.1em);letter-spacing:3px;color:var(--gold);font-weight:bold;line-height:1}
   .brand .dot{width:12px;height:12px;border-radius:50%;background:var(--gold)}
   .cd{font-weight:bold;font-size:.78em;background:rgba(255,215,0,.16);border:1px solid rgba(255,215,0,.5);color:var(--gold);padding:5px 14px;border-radius:999px;white-space:nowrap}
   .cd.over{background:rgba(255,90,90,.2);color:#ffd2d2}
   .ctrls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
-  .pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.85em;font-family:inherit;transition:.15s}
+  .pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:5px 11px;cursor:pointer;font-size:.78em;font-family:inherit;transition:.15s}
   .pill:hover{background:rgba(255,255,255,.26)}.pill.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:bold}
   .stage{position:relative;z-index:5;max-width:880px;margin:0 auto;padding:6px 16px 40px}
   .hud{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:6px 0 14px}
@@ -208,7 +210,7 @@
   <canvas id="confetti"></canvas>
   <audio id="bgm" loop preload="none"></audio>
   <div class="topbar">
-    <div class="brand"><div style="display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.05"><img src="LN/logo-rubix.png" alt="RUBIX" style="height:30px;width:auto;border-radius:6px" onerror="this.outerHTML='<span class=\'dot\'></span> RUBIX'"><span style="font-size:11px;letter-spacing:1.5px;color:#FFD700;font-weight:bold;margin-top:3px">THE LAST TRAIL</span></div> <span class="cd" id="cd"></span></div>
+    <div class="brand"><img src="LN/logo-rubix.png" alt="RUBIX" style="height:40px;width:auto;border-radius:7px" onerror="this.outerHTML='<span style=\'font-size:1.5em;font-weight:bold;color:#FFD700\'>RUBIX</span>'"><span class="bigtrail">THE LAST TRAIL</span><span class="cd" id="cd"></span></div>
     <div class="ctrls">
       <button class="pill" id="bookBtn" title="Livre souvenir" style="display:none">📖 <span class="bklbl">Livre souvenir</span></button>
       <button class="pill" id="restartBtn" title="Recommencer">🔄</button>
@@ -292,6 +294,8 @@ const CONFIG = {
       word:"TRAILEUSE", scrambled:"U · E · L · I · A · R · T · S · E",
       anaFR:"Remets les lettres pour trouver ce que Laurina EST sur les sentiers :",
       anaEN:"Unscramble the letters to find what Laurina IS on the trails:",
+      noteFR:"Michal parle surtout anglais… mais il a beaucoup progressé en français, alors il te défie sur un mot français 💪",
+      noteEN:"Michal mostly speaks English… but his French has improved a lot, so he's challenging you on a French word 💪",
       tipFR:"Ce que Laurina EST quand elle court en montagne.",tipEN:"What Laurina IS when she runs the mountains (FR word).",
       revealFR:"TRAILEUSE : c'est toi tout craché. 🏃‍♀️⛰️",revealEN:"TRAILEUSE: that's you all over. 🏃‍♀️⛰️" },
 
@@ -660,6 +664,7 @@ function anagram(r){
   const total=CONFIG.chronoSeconds+10;let left=total,answered=false,maxPts=1000;
   stage.innerHTML=hud()+`<div class="card">
     <span class="kicker">${t('challengeOf')} ${esc(r.who)}</span>
+    ${r.noteFR?`<p class="muted" style="font-style:italic;margin:4px 0 0">${esc(lang==='fr'?r.noteFR:r.noteEN)}</p>`:''}
     <div class="meet"><div class="meetface" id="mf">${initial(r.who)}</div><div><div class="chrono" style="position:static;display:inline-block" id="chrono">${left}s</div></div></div>
     <h2 style="margin-top:4px">🔤 ${r["ana"+up()]}</h2>
     <div class="anagram">${r.scrambled.split("·").map(c=>`<div class="tile">${c.trim()}</div>`).join("")}</div>
@@ -1000,10 +1005,33 @@ async function loadAdminList(){
   const all=[...CONFIG.cnps,...mots];
   const avg=all.length?(all.reduce((s,c)=>s+(c.score==null?10:c.score),0)/all.length).toFixed(1):"·";
   const cnt=$("#acount");if(cnt)cnt.innerHTML=`<b style="color:var(--navy)">${all.length}</b> mot${all.length>1?'s':''} reçu${all.length>1?'s':''} · cNPS moyen <b style="color:var(--navy)">${avg}</b>/10`;
-  const box=$("#alist");if(box)box.innerHTML=all.length?all.map(c=>`<div class="msg" style="text-align:left;margin:8px 0"><div class="who"><b>${esc(c.who)}</b> · ${c.score==null?10:c.score}/10</div><div class="note">${esc(c[lang]||c.fr||c.en||'')}</div></div>`).join(''):'<p class="muted">Aucun mot pour l\'instant.</p>';
+  const box=$("#alist");
+  if(box){
+    if(!all.length){box.innerHTML='<p class="muted">Aucun mot pour l\'instant.</p>';}
+    else{box.innerHTML=all.map((c,i)=>`<div class="msg" id="msg-${i}" style="text-align:left;margin:8px 0"><div class="who"><b>${esc(c.who)}</b> · ${c.score==null?10:c.score}/10</div><div class="note">${esc(c[lang]||c.fr||c.en||'')}</div><div class="row" style="gap:6px;margin-top:8px"><button class="btn sm ghost" data-ed="${i}">✏️ Modifier</button><button class="btn sm ghost" data-del="${i}">🗑️ Supprimer</button></div></div>`).join('');
+      box.querySelectorAll('[data-ed]').forEach(b=>{const i=+b.dataset.ed;b.onclick=()=>adminEdit(i,all[i]);});
+      box.querySelectorAll('[data-del]').forEach(b=>{const i=+b.dataset.del;b.onclick=()=>adminDelete(i,all[i]);});}
+  }
   const who=$("#awho");
   if(who){const names=[...new Set(all.map(c=>(c.who||'').trim()).filter(Boolean))];
     who.innerHTML=names.length?`<h2 style="margin-bottom:4px">Déjà reçu de (${names.length})</h2><p class="muted" style="margin-top:0">${names.map(esc).join(' · ')}</p><p class="muted" style="font-size:.85em">👉 Compare à ta liste d'équipe pour savoir qui relancer.</p>`:'';}
+}
+function adminEdit(i,c){const m=$("#msg-"+i);if(!m)return;const sc=(c.score==null?10:c.score);
+  m.innerHTML=`<label class="muted">Prénom</label><input type="text" id="ed-who-${i}" value="${esc(c.who||'')}" style="width:100%">
+    <label class="muted" style="display:block;margin-top:8px">Mot</label><textarea id="ed-note-${i}" maxlength="5000" style="width:100%;min-height:120px;border:2px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;font-size:1em">${esc(c.fr||c.en||c[lang]||'')}</textarea>
+    <label class="muted" style="display:block;margin-top:8px">Note cNPS : <b id="ed-sv-${i}">${sc}</b>/10</label><input type="range" id="ed-score-${i}" min="0" max="10" value="${sc}" style="width:100%">
+    <div id="ed-fb-${i}" style="color:var(--bad);font-weight:bold;margin-top:6px"></div>
+    <div class="row" style="gap:6px;margin-top:8px"><button class="btn sm" id="ed-save-${i}">💾 Enregistrer</button><button class="btn sm ghost" id="ed-cancel-${i}">Annuler</button></div>`;
+  $("#ed-score-"+i).oninput=e=>$("#ed-sv-"+i).textContent=e.target.value;
+  $("#ed-cancel-"+i).onclick=()=>loadAdminList();
+  $("#ed-save-"+i).onclick=async()=>{const who=$("#ed-who-"+i).value.trim(),note=$("#ed-note-"+i).value.trim(),score=+$("#ed-score-"+i).value;
+    if(!who||!note){$("#ed-fb-"+i).textContent='Prénom et mot requis.';return;}
+    $("#ed-save-"+i).disabled=true;
+    try{const res=await fetch('/api/mots',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:CONFIG.adminCode,index:i,who,note,score})});if(!res.ok)throw 0;loadAdminList();}
+    catch(e){$("#ed-fb-"+i).textContent="Échec de l'enregistrement.";$("#ed-save-"+i).disabled=false;}};
+}
+function adminDelete(i,c){if(!confirm('Supprimer définitivement le mot de '+(c&&c.who||'')+' ?'))return;
+  fetch('/api/mots',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:CONFIG.adminCode,index:i})}).then(r=>{if(!r.ok)throw 0;loadAdminList();}).catch(()=>alert('Échec de la suppression.'));
 }
 function getBest(){try{return +localStorage.getItem('tl_best')||0}catch(e){return 0}}
 function setBest(v){try{localStorage.setItem('tl_best',v)}catch(e){}}
