@@ -467,8 +467,10 @@ function world(){
   const stepX=560,baseX=440,arrive=420,avX=130;
   const stopX=i=>baseX+i*stepX,summitX=stopX(R.length),worldW=summitX+300;
   const camDist=x=>x-arrive;
-  const targetIdx=allDone?R.length:open;
-  const TH=THEMES[Math.min(targetIdx,THEMES.length-1)];
+  const maxIdx=allDone?R.length:open;
+  const focus=Math.max(0,Math.min((S.browse==null?maxIdx:S.browse),maxIdx));
+  const targetIdx=focus;
+  const TH=THEMES[Math.min(focus,THEMES.length-1)];
   let actors="";
   R.forEach((r,i)=>{const done=!!S.done[r.id],isObj=(i===open);
     actors+=`<div class="actor ${done?'met':''} ${isObj?'obj':''}" style="left:${stopX(i)}px;bottom:${52+terrainY(stopX(i))}px">
@@ -508,12 +510,22 @@ function world(){
     else{duo.style.bottom=duoY(targetIdx)+"px";duo.classList.remove("walking");arriveFn();}});
   S.lastShown=targetIdx;
   function arriveFn(){const sp=$("#speech"),nav=$("#worldnav");if(!sp||!nav)return;
-    if(allDone){sp.innerHTML=`<div class="chl"><div class="txt">🏁 <b>${lang==='fr'?'Sommet en vue !':'Summit in sight!'}</b></div></div>`;
-      nav.innerHTML=`<button class="btn" id="toSummit">${t('summitBtn')}</button>`;$("#toSummit").onclick=()=>{S.view="finish";render();};return;}
-    const r=R[open];const intro=(open===0)?`<div class="raphline">💡 <b>${esc(CONFIG.copilot.name)}</b> ${lang==='fr'?'t’aide si tu bloques.':'helps if you’re stuck.'}</div>`:"";
-    sp.innerHTML=`${intro}<div class="chl"><div class="spkav">${faceImg(r.face)}</div><div class="txt"><b>${esc(r.who)}</b> ${t('hasChallenge')}</div></div>`;
-    nav.innerHTML=`<button class="btn" id="talk">${t('talk')} ${esc(r.who)} 💬</button>`;
-    $("#talk").onclick=()=>{S.current=open;S.view="play";render();};}
+    const prevBtn=focus>0?`<button class="btn sm ghost" id="prevStep">◀ ${lang==='fr'?'Précédent':'Previous'}</button>`:'';
+    const nextBtn=focus<maxIdx?`<button class="btn sm ghost" id="nextStep">${lang==='fr'?'Suivant':'Next'} ▶</button>`:'';
+    function bindNav(){const pv=$("#prevStep"),nx=$("#nextStep");
+      if(pv)pv.onclick=()=>{S.browse=focus-1;render();};
+      if(nx)nx.onclick=()=>{S.browse=Math.min(maxIdx,focus+1);render();};}
+    if(allDone&&focus===R.length){sp.innerHTML=`<div class="chl"><div class="txt">🏁 <b>${lang==='fr'?'Sommet en vue !':'Summit in sight!'}</b></div></div>`;
+      nav.innerHTML=`${prevBtn}<button class="btn" id="toSummit">${t('summitBtn')}</button>`;$("#toSummit").onclick=()=>{S.browse=null;S.view="finish";render();};bindNav();return;}
+    const r=R[focus];
+    if(focus===open){const intro=(open===0)?`<div class="raphline">💡 <b>${esc(CONFIG.copilot.name)}</b> ${lang==='fr'?'t’aide si tu bloques.':'helps if you’re stuck.'}</div>`:"";
+      sp.innerHTML=`${intro}<div class="chl"><div class="spkav">${faceImg(r.face)}</div><div class="txt"><b>${esc(r.who)}</b> ${t('hasChallenge')}</div></div>`;
+      nav.innerHTML=`${prevBtn}<button class="btn" id="talk">${t('talk')} ${esc(r.who)} 💬</button>${nextBtn}`;
+      $("#talk").onclick=()=>{S.browse=null;S.current=open;S.view="play";render();};}
+    else{sp.innerHTML=`<div class="chl"><div class="spkav">${faceImg(r.face)}</div><div class="txt"><b>${esc(r.who)}</b> ✅ ${lang==='fr'?'déjà rencontré·e':'already met'}</div></div>`;
+      nav.innerHTML=`${prevBtn}<button class="btn ghost" id="replay1">${lang==='fr'?'Revoir':'Replay'} ${esc(r.who)} 🔁</button>${nextBtn}`;
+      $("#replay1").onclick=()=>{S.current=focus;S.view="play";render();};}
+    bindNav();}
 }
 
 /* =========================== PLAY DISPATCH + AWARD =========================== */
@@ -526,7 +538,7 @@ function play(){const r=CONFIG.ravitos[S.current];
   if(r.game==='puzzle')return puzzle(r);
   return mcqPhoto(r); /* photo + year + detail */}
 
-function afterChallenge(){const dc=Object.keys(S.done).length;
+function afterChallenge(){S.browse=null;const dc=Object.keys(S.done).length;
   if(firstOpenIdx()!==-1&&(dc===3||dc===6)&&!S.ravSeen[dc]){S.ravSeen[dc]=true;S.ravType=(dc===6?'climb':'catch');S.view="ravito";}
   else S.view=(firstOpenIdx()===-1)?"finish":"map";
   render();}
