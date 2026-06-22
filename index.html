@@ -22,7 +22,7 @@
   body.present{--fs:21px}
   .skybg{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,#0a1a48,#243a7a 30%,#5b6fa8 50%,#caa0a0 64%,#f0b070 74%,#ffd98c 86%)}
   .topbar{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;padding:12px 18px;color:#fff}
-  .brand{display:flex;flex-direction:row;align-items:center;gap:10px;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+  .brand{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;text-shadow:0 2px 10px rgba(0,0,0,.45)}
   .brand img{filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
   .bigtrail{font-size:clamp(1.05em,3.4vw,1.6em);letter-spacing:2.5px;color:var(--gold);font-weight:bold;line-height:1}
   .brand .dot{width:12px;height:12px;border-radius:50%;background:var(--gold)}
@@ -61,7 +61,7 @@
   .qsplit .qbody{flex:1 1 54%;min-width:0}
   .qsplit .photowrap{margin:0}
   .qsplit .photowrap img{max-height:54vh}
-  @media(max-width:760px){.qsplit{flex-direction:column}}
+  @media(max-width:760px){.qsplit{flex-direction:column}.qsplit .photowrap img{max-height:38vh}}
   .chrono{position:absolute;top:10px;right:10px;background:rgba(5,30,80,.85);color:var(--gold);font-weight:bold;border-radius:999px;padding:6px 14px;font-size:1.1em;z-index:2}
   .ptsbar{height:10px;background:#dfe6f2;border-radius:999px;overflow:hidden;margin:6px 0 2px}
   .ptsfill{height:100%;background:linear-gradient(90deg,var(--bad),#f5a623,var(--ok));transition:width .25s linear}
@@ -206,7 +206,7 @@
 </head>
 <body>
   <div class="skybg"></div>
-  <div class="lightbox" id="lightbox"><img id="lbimg" src=""><div class="lbnav">clique pour fermer</div></div>
+  <div class="lightbox" id="lightbox"><img id="lbimg" src=""><div class="lbnav" id="lbnav">clique pour fermer</div></div>
   <canvas id="confetti"></canvas>
   <audio id="bgm" loop preload="none"></audio>
   <div class="topbar">
@@ -434,7 +434,7 @@ function hud(){const v=Object.keys(S.done).length;return `<div class="hud">
   <div class="stat"><b>${S.total}</b><span>${t('hudPts')}</span></div></div>`;}
 function firstOpenIdx(){for(let i=0;i<CONFIG.ravitos.length;i++)if(!S.done[CONFIG.ravitos[i].id])return i;return -1;}
 function esc(s){return (s+"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-function openLB(s,f){const lb=$("#lightbox");if(!lb)return;const im=$("#lbimg");im.src=s;im.style.filter=f||'none';lb.classList.add("on");}
+function openLB(s,f){const lb=$("#lightbox");if(!lb)return;const im=$("#lbimg");im.src=s;im.style.filter=f||'none';const n=$("#lbnav");if(n)n.textContent=lang==='fr'?'clique pour fermer':'click to close';lb.classList.add("on");}
 $("#lightbox").onclick=()=>$("#lightbox").classList.remove("on");
 function faceImg(path){return `<img src="${src(path)}" onerror="this.style.display='none'">`;}
 
@@ -442,11 +442,11 @@ function faceImg(path){return `<img src="${src(path)}" onerror="this.style.displ
 function gateOK(){return S.motMode||S.view==='motslist'||!CONFIG.password||S.view==='addword'||sessionStorage.getItem("tl_ok")==="1";}
 function showGate(){
   stage.innerHTML=`<div class="card" style="max-width:420px;margin:30px auto;text-align:center">
-    <span class="kicker">🔒 Accès</span><h2>Mot de passe</h2>
-    <input type="password" id="gpw" style="text-transform:none;letter-spacing:1px;text-align:center" placeholder="Mot de passe" autocomplete="off">
+    <span class="kicker">🔒 ${lang==='fr'?'Accès':'Access'}</span><h2>${lang==='fr'?'Mot de passe':'Password'}</h2>
+    <input type="password" id="gpw" style="text-transform:none;letter-spacing:1px;text-align:center" placeholder="${lang==='fr'?'Mot de passe':'Password'}" autocomplete="off">
     <div id="gfb" style="color:var(--bad);font-weight:bold;margin-top:8px"></div>
-    <div class="row" style="justify-content:center"><button class="btn" id="gok">Entrer</button></div></div>`;
-  const tryp=()=>{if($("#gpw").value===CONFIG.password){sessionStorage.setItem("tl_ok","1");render();}else{$("#gfb").textContent="Mot de passe incorrect.";$("#gpw").value="";}};
+    <div class="row" style="justify-content:center"><button class="btn" id="gok">${lang==='fr'?'Entrer':'Enter'}</button></div></div>`;
+  const tryp=()=>{if($("#gpw").value===CONFIG.password){sessionStorage.setItem("tl_ok","1");render();}else{$("#gfb").textContent=lang==='fr'?"Mot de passe incorrect.":"Wrong password.";$("#gpw").value="";}};
   $("#gok").onclick=tryp;$("#gpw").addEventListener("keydown",e=>{if(e.key==="Enter")tryp();});$("#gpw").focus();
 }
 function render(){
@@ -1008,15 +1008,16 @@ async function loadAdminList(){
   const box=$("#alist");
   if(box){
     if(!all.length){box.innerHTML='<p class="muted">Aucun mot pour l\'instant.</p>';}
-    else{box.innerHTML=all.map((c,i)=>`<div class="msg" id="msg-${i}" style="text-align:left;margin:8px 0"><div class="who"><b>${esc(c.who)}</b> · ${c.score==null?10:c.score}/10</div><div class="note">${esc(c[lang]||c.fr||c.en||'')}</div><div class="row" style="gap:6px;margin-top:8px"><button class="btn sm ghost" data-ed="${i}">✏️ Modifier</button><button class="btn sm ghost" data-del="${i}">🗑️ Supprimer</button></div></div>`).join('');
-      box.querySelectorAll('[data-ed]').forEach(b=>{const i=+b.dataset.ed;b.onclick=()=>adminEdit(i,all[i]);});
-      box.querySelectorAll('[data-del]').forEach(b=>{const i=+b.dataset.del;b.onclick=()=>adminDelete(i,all[i]);});}
+    else{const cn=(CONFIG.cnps||[]).length;
+      box.innerHTML=all.map((c,i)=>`<div class="msg" id="msg-${i}" style="text-align:left;margin:8px 0"><div class="who"><b>${esc(c.who)}</b> · ${c.score==null?10:c.score}/10</div><div class="note">${esc(c[lang]||c.fr||c.en||'')}</div>${i>=cn?`<div class="row" style="gap:6px;margin-top:8px"><button class="btn sm ghost" data-ed="${i}">✏️ Modifier</button><button class="btn sm ghost" data-del="${i}">🗑️ Supprimer</button></div>`:''}</div>`).join('');
+      box.querySelectorAll('[data-ed]').forEach(b=>{const i=+b.dataset.ed;b.onclick=()=>adminEdit(i,i-cn,all[i]);});
+      box.querySelectorAll('[data-del]').forEach(b=>{const i=+b.dataset.del;b.onclick=()=>adminDelete(i-cn,all[i]);});}
   }
   const who=$("#awho");
   if(who){const names=[...new Set(all.map(c=>(c.who||'').trim()).filter(Boolean))];
     who.innerHTML=names.length?`<h2 style="margin-bottom:4px">Déjà reçu de (${names.length})</h2><p class="muted" style="margin-top:0">${names.map(esc).join(' · ')}</p><p class="muted" style="font-size:.85em">👉 Compare à ta liste d'équipe pour savoir qui relancer.</p>`:'';}
 }
-function adminEdit(i,c){const m=$("#msg-"+i);if(!m)return;const sc=(c.score==null?10:c.score);
+function adminEdit(i,ri,c){const m=$("#msg-"+i);if(!m)return;const sc=(c.score==null?10:c.score);
   m.innerHTML=`<label class="muted">Prénom</label><input type="text" id="ed-who-${i}" value="${esc(c.who||'')}" style="width:100%">
     <label class="muted" style="display:block;margin-top:8px">Mot</label><textarea id="ed-note-${i}" maxlength="5000" style="width:100%;min-height:120px;border:2px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;font-size:1em">${esc(c.fr||c.en||c[lang]||'')}</textarea>
     <label class="muted" style="display:block;margin-top:8px">Note cNPS : <b id="ed-sv-${i}">${sc}</b>/10</label><input type="range" id="ed-score-${i}" min="0" max="10" value="${sc}" style="width:100%">
@@ -1027,11 +1028,11 @@ function adminEdit(i,c){const m=$("#msg-"+i);if(!m)return;const sc=(c.score==nul
   $("#ed-save-"+i).onclick=async()=>{const who=$("#ed-who-"+i).value.trim(),note=$("#ed-note-"+i).value.trim(),score=+$("#ed-score-"+i).value;
     if(!who||!note){$("#ed-fb-"+i).textContent='Prénom et mot requis.';return;}
     $("#ed-save-"+i).disabled=true;
-    try{const res=await fetch('/api/mots',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:CONFIG.adminCode,index:i,who,note,score})});if(!res.ok)throw 0;loadAdminList();}
+    try{const res=await fetch('/api/mots',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:CONFIG.adminCode,index:ri,who,note,score})});if(!res.ok)throw 0;loadAdminList();}
     catch(e){$("#ed-fb-"+i).textContent="Échec de l'enregistrement.";$("#ed-save-"+i).disabled=false;}};
 }
-function adminDelete(i,c){if(!confirm('Supprimer définitivement le mot de '+(c&&c.who||'')+' ?'))return;
-  fetch('/api/mots',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:CONFIG.adminCode,index:i})}).then(r=>{if(!r.ok)throw 0;loadAdminList();}).catch(()=>alert('Échec de la suppression.'));
+function adminDelete(ri,c){if(!confirm('Supprimer définitivement le mot de '+(c&&c.who||'')+' ?'))return;
+  fetch('/api/mots',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:CONFIG.adminCode,index:ri})}).then(r=>{if(!r.ok)throw 0;loadAdminList();}).catch(()=>alert('Échec de la suppression.'));
 }
 function getBest(){try{return +localStorage.getItem('tl_best')||0}catch(e){return 0}}
 function setBest(v){try{localStorage.setItem('tl_best',v)}catch(e){}}
