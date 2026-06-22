@@ -13,7 +13,7 @@ function getRedis() {
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
     if (req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
       const who = String(body.who || '').trim().slice(0, 80);
-      const note = String(body.note || '').trim().slice(0, 1000);
+      const note = String(body.note || '').trim().slice(0, 5000);
       let score = Number(body.score);
       if (!Number.isFinite(score)) score = 10;
       score = Math.max(0, Math.min(10, Math.round(score)));
@@ -49,6 +49,20 @@ module.exports = async (req, res) => {
       if (!redis) { res.status(503).json({ error: 'storage_not_configured' }); return; }
       await redis.rpush(KEY, { who, note, score, ts: Date.now() });
       res.status(200).json({ ok: true });
+      return;
+    }
+
+    if (req.method === 'PATCH') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+      if (body.code !== 'FIXLAURINA2026') { res.status(403).json({ error: 'forbidden' }); return; }
+      if (!redis) { res.status(503).json({ error: 'storage_not_configured' }); return; }
+      const idx = Number(body.index);
+      const cur = await redis.lindex(KEY, idx);
+      if (cur == null) { res.status(404).json({ error: 'not found' }); return; }
+      const obj = typeof cur === 'string' ? JSON.parse(cur) : cur;
+      if (body.note != null) obj.note = String(body.note).slice(0, 5000);
+      await redis.lset(KEY, idx, obj);
+      res.status(200).json({ ok: true, item: obj });
       return;
     }
 

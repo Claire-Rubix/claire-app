@@ -862,11 +862,10 @@ function finish(){
       <span class="kicker">${t('cnpsKicker')}</span><h2>${t('cnpsTitle')}</h2><p class="muted">${t('cnpsSub')}</p>
       <div class="npsbig"><span class="num" id="cnpsavg">·</span><span class="muted">${t('cnpsScoreWord')}</span></div>
       <h2 style="margin-top:18px">${t('cnpsLetters')}</h2>
-      <p class="muted" style="margin-top:-6px">${t('cnpsOpenHint')} <button class="btn sm ghost" id="addw" style="margin-left:6px">${t('awBtn')}</button></p>
+      <p class="muted" style="margin-top:-6px">${t('cnpsOpenHint')}</p>
       <div class="letters" id="letters"><p class="muted">${t('cnpsEmpty')}</p></div></div>
     <h2 style="margin-top:24px;text-align:left">${t('recap')}</h2><div class="wall" style="text-align:left">${recap}</div>${gallery}
     <div class="row" style="justify-content:center">${cagnotte}<button class="btn ghost" id="printBook">${t('printBook')}</button><button class="btn ghost" id="replay">${t('replay')}</button></div></div>`;
-  $("#addw").onclick=()=>{S.view="addword";render();};
   $("#printBook").onclick=printBook;
   $("#replay").onclick=()=>{if(S.timer)clearInterval(S.timer);S={view:"intro",current:0,done:{},scores:{},km:0,dplus:0,total:0,timer:null,raph:{},lastShown:null,ravSeen:{}};render();};
   loadLetters();
@@ -940,13 +939,15 @@ function addword(){stage.innerHTML=`${S.motMode?`<div style="text-align:center;m
   ${S.motMode?`<p class="muted" style="margin-top:-4px">${lang==='fr'?'Laisse un petit mot à Laurina 💛 Elle le découvrira à la fin de son aventure.':'Leave a little note for Laurina 💛 She will discover it at the end of her adventure.'}</p>`:''}
   <label class="muted">${t('awName')}</label><input type="text" id="awn">
   <label class="muted" style="display:block;margin-top:12px">${t('awMsg')}</label>
-  <textarea id="awm" style="width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:1em;min-height:110px"></textarea>
+  <textarea id="awm" maxlength="5000" style="width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:1em;min-height:110px"></textarea>
+  <div class="muted" style="font-size:.78em;text-align:right;margin-top:2px"><span id="awcount">0</span> / 5000 ${lang==='fr'?'caractères':'characters'}</div>
   <label class="muted" style="display:block;margin-top:12px">${t('awScore')} : <b id="awsv">10</b>/10</label>
   <input type="range" id="aws" min="0" max="10" value="10" style="width:100%">
   <p class="muted" style="font-size:.82em;margin-top:4px;font-style:italic">cNPS = <b>C</b>olleague <b>N</b>et <b>P</b>romoter <b>S</b>core 😉</p>
   <div id="awfb" style="margin-top:12px;font-weight:bold"></div>
   <div class="row"><button class="btn" id="awsend">${t('awSend')}</button>${S.motMode?'':`<button class="btn ghost" id="awback">${t('awBack')}</button>`}</div></div>`;
   $("#aws").oninput=e=>$("#awsv").textContent=e.target.value;
+  $("#awm").oninput=e=>$("#awcount").textContent=e.target.value.length;
   const bk=$("#awback");if(bk)bk.onclick=()=>{S.view=(firstOpenIdx()===-1)?"finish":"map";render();};
   $("#awsend").onclick=async()=>{const who=$("#awn").value.trim(),note=$("#awm").value.trim(),score=+$("#aws").value;const fb=$("#awfb");
     if(!who||!note){fb.style.color="var(--bad)";fb.textContent=t('awEmpty');return;}$("#awsend").disabled=true;
