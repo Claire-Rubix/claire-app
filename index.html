@@ -21,18 +21,19 @@
   body{font-family:"Trebuchet MS","Segoe UI",sans-serif;color:var(--ink);min-height:100vh;font-size:var(--fs);overflow-x:hidden;background:#071a3d}
   body.present{--fs:21px}
   .skybg{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,#0a1a48,#243a7a 30%,#5b6fa8 50%,#caa0a0 64%,#f0b070 74%,#ffd98c 86%)}
-  .topbar{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;color:#fff}
-  .brand{font-weight:bold;letter-spacing:.5px;display:flex;align-items:center;gap:10px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+  .topbar{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 16px;color:#fff}
+  .brand{font-weight:bold;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:12px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
   .brand .dot{width:12px;height:12px;border-radius:50%;background:var(--gold)}
-  .cd{font-weight:normal;font-size:.72em;background:rgba(255,215,0,.18);border:1px solid rgba(255,215,0,.45);color:var(--gold);padding:3px 10px;border-radius:999px}
+  .cd{font-weight:bold;font-size:.78em;background:rgba(255,215,0,.16);border:1px solid rgba(255,215,0,.5);color:var(--gold);padding:5px 14px;border-radius:999px;white-space:nowrap}
   .cd.over{background:rgba(255,90,90,.2);color:#ffd2d2}
-  .ctrls{display:flex;gap:8px;align-items:center}
+  .ctrls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
   .pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.85em;font-family:inherit;transition:.15s}
   .pill:hover{background:rgba(255,255,255,.26)}.pill.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:bold}
   .stage{position:relative;z-index:5;max-width:880px;margin:0 auto;padding:6px 16px 40px}
   .hud{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:6px 0 14px}
   .stat{background:rgba(5,30,80,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 8px;text-align:center;color:#fff}
   .stat b{display:block;font-size:1.5em;color:var(--gold);line-height:1.1}.stat span{font-size:.66em;opacity:.85;letter-spacing:.5px}
+  @media(max-width:560px){.hud{gap:5px}.stat{padding:8px 3px;border-radius:10px}.stat b{font-size:1.05em}.stat span{font-size:.52em;letter-spacing:0}}
   .card{background:var(--paper);border-radius:22px;padding:20px;box-shadow:0 30px 70px rgba(0,0,0,.45);animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
   body.present .card{padding:36px}
   @keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
@@ -101,6 +102,14 @@
   .lightbox{display:none;position:fixed;inset:0;background:rgba(5,15,40,.93);z-index:60;align-items:center;justify-content:center;cursor:zoom-out;flex-direction:column;gap:14px}
   .lightbox.on{display:flex}.lightbox img{max-width:92vw;max-height:84vh;border-radius:12px;border:3px solid var(--gold);box-shadow:0 20px 60px rgba(0,0,0,.6)}
   .lightbox .lbnav{color:#fff;font-size:.9em;opacity:.8}
+  .lettermodal{display:none;position:fixed;inset:0;background:rgba(5,15,40,.9);z-index:70;align-items:center;justify-content:center;padding:18px}
+  .lettermodal.on{display:flex}
+  .lmcard{position:relative;background:linear-gradient(135deg,#fffdf5,#fff7d9);border:2px solid var(--gold);border-radius:18px;padding:28px 26px;max-width:520px;width:100%;max-height:84vh;overflow:auto;box-shadow:0 30px 70px rgba(0,0,0,.5);text-align:center;animation:pop .3s}
+  .lmclose{position:absolute;top:8px;right:12px;background:none;border:none;font-size:1.4em;line-height:1;cursor:pointer;color:#5b6b86}
+  .lmseal{font-size:2.6em}
+  .lmwho{font-weight:bold;color:var(--navy);font-size:1.35em;margin-top:2px}
+  .lmscore{display:inline-block;background:var(--navy);color:var(--gold);border-radius:999px;padding:3px 12px;font-size:.82em;font-weight:bold;margin:10px 0}
+  .lmnote{margin-top:8px;line-height:1.55;color:var(--ink);text-align:left;white-space:pre-wrap;font-size:1.02em}
   .help{font-size:.78em;color:#5b6b86;margin-top:18px;border-top:1px dashed var(--line);padding-top:12px}
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
   /* intro */
@@ -253,6 +262,7 @@ const CONFIG = {
 
     { id:"r3", who:"Eyosyas", face:"LN/Eyosyas.jpg", km:20, dplus:520, game:"detail",
       photo:"LN/3554ddd1-b6cd-4021-b357-a05da86a4e55 (1).jpg",
+      photoClear:"LN/eyosyas-clair.jpg",
       qFR:"Octobre 2025, escape game avec Eyosyas. Quel est le nom de l'escape game (l'enseigne) ?",
       qEN:"October 2025, escape game with Eyosyas. What's the name of the escape game (the brand)?",
       optFR:["Wake Up","Get Out","Hint Hunt","The Game"],
@@ -306,6 +316,7 @@ const CONFIG = {
 
     { id:"r8", who:"Elsa", face:"LN/Elsa.jpeg", km:21, dplus:560, game:"detail",
       photo:"LN/31ecb4bd-7196-4f24-aa1c-87d962ed4102 (1).jpg",
+      photoClear:"LN/elsa-clair.jpg",
       qFR:"Soirée de Noël de l'équipe. Que tient la collègue tout à gauche de la photo ?",
       qEN:"Team Christmas party. What is the colleague on the far left holding?",
       optFR:["Une coupe de champagne","Un cadeau","Un bonnet de Père Noël","Un téléphone"],
@@ -364,7 +375,7 @@ const I18N={
     points:"points en jeu",tfTrue:"Vrai",tfFalse:"Faux",
     correctTxt:"Trouvé !",wrongTxt:"Raté, mais on continue.",
     nextRavito:"Continuer le trail →",summitBtn:"Atteindre le sommet 🏔️",
-    talk:"Parler à",hasChallenge:"a un défi pour toi !",sceneHint:"Avance jusqu'au collègue qui clignote (❗) et relève son défi.",
+    talk:"Défier",hasChallenge:"a un défi pour toi !",sceneHint:"Avance jusqu'au collègue qui clignote (❗) et relève son défi.",
     askRaph:"💡 Coup de pouce de Raphaël",raph5050:"💡 50/50 (Raphaël)",
     memoryTitle:"Memory des visages",memorySub:"Retrouve les paires avant la fin du chrono.",skip:"Passer ⏭️",geoHint:"Clique sur la carte pour placer ton pin, puis valide.",geoNoMap:"Carte indisponible (connexion internet requise).",puzzleTitle:"Reconstitue la photo",puzzleSub:"Fais glisser les tuiles pour reformer la photo de l'équipe.",
     ravTitle:"Ravito ! 🥤",ravSub:"Pause éclair : attrape un max de mini-Laurina… mais ne clique PAS sur les autres collègues (−8) !",ravGo:"Repartir sur le sentier →",ravBonus:"bonus",climbSub:"Martèle le bouton (ou la barre Espace) pour grimper le plus haut possible avant le chrono !",climbTap:"GRIMPE !",reflexSub:"Tape UNIQUEMENT quand c'est VERT ! (rouge = −8 points)",runSub:"Saute (clic ou barre Espace) par-dessus les pains aux raisins le plus longtemps possible !",
@@ -384,7 +395,7 @@ const I18N={
     points:"points at stake",tfTrue:"True",tfFalse:"False",
     correctTxt:"Got it!",wrongTxt:"Missed, let's keep going.",
     nextRavito:"Keep going →",summitBtn:"Reach the summit 🏔️",
-    talk:"Talk to",hasChallenge:"has a challenge for you!",sceneHint:"Walk up to the flashing colleague (❗) and take on the challenge.",
+    talk:"Challenge",hasChallenge:"has a challenge for you!",sceneHint:"Walk up to the flashing colleague (❗) and take on the challenge.",
     askRaph:"💡 Hint from Raphaël",raph5050:"💡 50/50 (Raphaël)",
     memoryTitle:"Faces memory",memorySub:"Find the matching pairs before time runs out.",skip:"Skip ⏭️",geoHint:"Click the map to drop your pin, then submit.",geoNoMap:"Map unavailable (internet connection required).",puzzleTitle:"Reassemble the photo",puzzleSub:"Slide the tiles to rebuild the team photo.",
     ravTitle:"Pit stop! 🥤",ravSub:"Quick break: tap as many mini-Laurinas as you can… but DON'T tap the other colleagues (−8)!",ravGo:"Back to the trail →",ravBonus:"bonus",climbSub:"Hammer the button (or the Space bar) to climb as high as you can before the timer!",climbTap:"CLIMB!",reflexSub:"Tap ONLY when it turns GREEN! (red = −8 points)",runSub:"Jump (click or Space bar) over the pains aux raisins as long as you can!",
@@ -546,7 +557,7 @@ function world(){
     const r=R[focus];
     if(focus===open){const intro=(open===0)?`<div class="raphline">💡 <b>${esc(CONFIG.copilot.name)}</b> ${lang==='fr'?': je reste dispo pour un coup de pouce sur les défis. Je te laisse avancer, bonne route 💪':": I'll stay around for a hint on the challenges. Off you go, enjoy 💪"}</div>`:"";
       sp.innerHTML=`${intro}<div class="chl"><div class="spkav">${faceImg(r.face)}</div><div class="txt"><b>${esc(r.who)}</b> ${t('hasChallenge')}</div></div>`;
-      nav.innerHTML=`${prevBtn}<button class="btn" id="talk">${t('talk')} ${esc(r.who)} 💬</button>${nextBtn}`;
+      nav.innerHTML=`${prevBtn}<button class="btn" id="talk">${t('talk')} ${esc(r.who)} ⚡</button>${nextBtn}`;
       $("#talk").onclick=()=>{S.browse=null;S.current=open;S.view="play";render();};}
     else{sp.innerHTML=`<div class="chl"><div class="spkav">${faceImg(r.face)}</div><div class="txt"><b>${esc(r.who)}</b> ✅ ${lang==='fr'?'déjà rencontré·e':'already met'}</div></div>`;
       nav.innerHTML=`${prevBtn}<button class="btn ghost" id="replay1">${lang==='fr'?'Revoir':'Replay'} ${esc(r.who)} 🔁</button>${nextBtn}`;
@@ -608,7 +619,7 @@ function mcqPhoto(r){
   const rb=$("#raph");if(rb)rb.onclick=()=>{if(S.raph[r.id])return;S.raph[r.id]=true;rb.disabled=true;maxPts=Math.round(maxPts*0.7);
     [...stage.querySelectorAll(".opt")].filter(o=>+o.dataset.i!==r.correct).slice(0,1).forEach(o=>o.classList.add("gone"));
     const rt=$("#raphtxt");if(rt&&r["tip"+up()])rt.textContent=r["tip"+up()];upd();};
-  function lockOpts(ch){clearInterval(S.timer);img.style.filter=r.bw?"grayscale(1)":"none";
+  function lockOpts(ch){clearInterval(S.timer);img.style.filter=r.bw?"grayscale(1)":"none";if(r.photoClear)img.src=src(r.photoClear);
     stage.querySelectorAll(".opt").forEach(o=>{const k=+o.dataset.i;if(k===r.correct)o.classList.add("correct");else if(k===ch)o.classList.add("wrong");o.disabled=true;});}
   function done(correct){answered=true;const pts=correct?curPts():0;$("#mfb").innerHTML=award(r,pts,correct,r["reveal"+up()]);bindCont();if(correct)burst();}
   function timeUp(){if(answered)return;lockOpts(-1);done(false);$("#mfb").insertAdjacentHTML("afterbegin",`<div class="feedback meh">${t('timeUp')}</div>`);}
@@ -940,7 +951,15 @@ async function renderBook(){
 function lettersHtml(list){return list.map(c=>`<div class="letter">
   <div class="seal">💌</div><div class="lwho">${esc(c.who)}</div><div class="lhint">${lang==='fr'?'clique pour ouvrir':'click to open'}</div>
   <div class="body"><div class="lwho">${esc(c.who)}</div><div class="score">cNPS : ${c.score??10}/10</div><div class="note">${esc(c[lang]||c.fr||c.en||"")}</div></div></div>`).join("");}
-function attachLetterClicks(){stage.querySelectorAll(".letter").forEach(el=>{el.onclick=()=>{if(el.classList.contains("opened"))return;el.classList.add("opened");burst(14);};});}
+function attachLetterClicks(){stage.querySelectorAll(".letter").forEach(el=>{el.onclick=()=>openLetter(el);});}
+function openLetter(el){const b=el.querySelector('.body');if(!b)return;
+  const who=(b.querySelector('.lwho')||{}).textContent||'';
+  const score=(b.querySelector('.score')||{}).textContent||'';
+  const note=(b.querySelector('.note')||{}).textContent||'';
+  let m=document.getElementById('lettermodal');
+  if(!m){m=document.createElement('div');m.id='lettermodal';m.className='lettermodal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');});}
+  m.innerHTML=`<div class="lmcard"><button class="lmclose" id="lmx">✕</button><div class="lmseal">💌</div><div class="lmwho">${esc(who)}</div><div class="lmscore">${esc(score)}</div><div class="lmnote">${esc(note)}</div></div>`;
+  m.classList.add('on');const x=document.getElementById('lmx');if(x)x.onclick=()=>m.classList.remove('on');burst(12);}
 async function loadLetters(){try{const live=await getMots();const all=[...CONFIG.cnps,...live];const box=$("#letters");
   if(box&&all.length){box.innerHTML=lettersHtml(all);attachLetterClicks();}
   const a=$("#cnpsavg");if(a)a.textContent=all.length?(all.reduce((s,c)=>s+(c.score||10),0)/all.length).toFixed(1):"·";}catch(e){}}
