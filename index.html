@@ -238,7 +238,7 @@ const CONFIG = {
       qEN:"October 2025, escape game with Eyosyas. What's the name of the escape game (the brand)?",
       optFR:["Wake Up","Get Out","Hint Hunt","The Game"],
       optEN:["Wake Up","Get Out","Hint Hunt","The Game"], correct:0,
-      tipFR:"Regarde le logo en bas à droite (la salle, elle, s'appelle « Contagion »)…",tipEN:"Look at the logo bottom-right (the room itself is “Contagion”)…",
+      tipFR:"L'enseigne, c'est ce que fait ton réveil le matin… en anglais 😉 (la salle, elle, s'appelle « Contagion »).",tipEN:"The brand is what your alarm makes you do every morning… in English 😉 (the room itself is “Contagion”).",
       revealFR:"« Wake Up » (Live Escape Game), salle Contagion ! Énigme résolue en équipe.",revealEN:"“Wake Up” (Live Escape Game), room Contagion! Puzzle solved as a team." },
 
     { id:"r4", who:"Raphaël", copilot:true, face:"LN/Raphaël.jpg", km:22, dplus:610, game:"detail", noHint:true,
@@ -746,7 +746,7 @@ function neighbors(i,N){const r=Math.floor(i/N),c=i%N,a=[];if(r>0)a.push(i-N);if
 function puzzle(r){
   const N=3,T=N*N;let arr,e;
   do{arr=[...Array(T).keys()];e=T-1;for(let k=0;k<30;k++){const adj=neighbors(e,N),p=adj[Math.floor(Math.random()*adj.length)];[arr[e],arr[p]]=[arr[p],arr[e]];e=p;}}while(arr.every((v,i)=>v===i));
-  let answered=false,moves=0,left=CONFIG.chronoSeconds+70;
+  let answered=false,moves=0,left=CONFIG.chronoSeconds+40;
   stage.innerHTML=hud()+`<div class="card">
     <span class="kicker">${t('challengeOf')} ${esc(r.who)}</span>
     <h2>🧩 ${t('puzzleTitle')}</h2>${r.noteFR?`<p class="muted" style="font-style:italic">${esc(lang==='fr'?r.noteFR:r.noteEN)}</p>`:''}<p class="muted">${t('puzzleSub')} <b id="chrono">${left}s</b></p>
