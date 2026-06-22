@@ -200,6 +200,7 @@
 const CONFIG = {
   portrait:"LN/Laurina.jpg",
   password:"LAURINA2026",   // code d'acces au JEU (surprise). La page /#mot reste libre (sans code).
+  adminCode:"CLAIRE2026",   // code prive pour /#liste (lire tous les mots) - juste pour Claire.
   introVideo:"LN/Test.mp4",
   cagnotteURL:"",
   deadline:"2026-07-08T23:59:59",
@@ -402,7 +403,7 @@ $("#lightbox").onclick=()=>$("#lightbox").classList.remove("on");
 function faceImg(path){return `<img src="${src(path)}" onerror="this.style.display='none'">`;}
 
 /* =========================== ROUTER =========================== */
-function gateOK(){return S.motMode||!CONFIG.password||S.view==='addword'||sessionStorage.getItem("tl_ok")==="1";}
+function gateOK(){return S.motMode||S.view==='motslist'||!CONFIG.password||S.view==='addword'||sessionStorage.getItem("tl_ok")==="1";}
 function showGate(){
   stage.innerHTML=`<div class="card" style="max-width:420px;margin:30px auto;text-align:center">
     <span class="kicker">🔒 Accès</span><h2>Mot de passe</h2>
@@ -421,6 +422,7 @@ function render(){
   if(S.view==='play')return play();
   if(S.view==='ravito')return ravito();
   if(S.view==='addword')return addword();
+  if(S.view==='motslist')return motslist();
   if(S.view==='finish')return finish();
 }
 
@@ -899,6 +901,36 @@ async function getMots(){
   try{const r=await fetch(MOTS_API,{cache:'no-store'});if(!r.ok)throw 0;const data=await r.json();return (data||[]).map(x=>({who:x.who,fr:x.note,en:x.note,score:(x.score==null?10:x.score)}));}
   catch(e){return lsMots().map(r=>({who:r.who,fr:r.note,en:r.note,score:(r.score==null?10:r.score)}));}
 }
+function motslist(){
+  if(sessionStorage.getItem('tl_admin')!=='1'){
+    stage.innerHTML=`<div class="card" style="max-width:420px;margin:30px auto;text-align:center">
+      <span class="kicker">🔒 Privé</span><h2>Les mots reçus</h2>
+      <p class="muted">Page réservée. Entre le code admin.</p>
+      <input type="password" id="apw" style="text-transform:none;letter-spacing:1px;text-align:center" placeholder="Code admin" autocomplete="off">
+      <div id="afb" style="color:var(--bad);font-weight:bold;margin-top:8px"></div>
+      <div class="row" style="justify-content:center"><button class="btn" id="aok">Entrer</button></div></div>`;
+    const tryp=()=>{if($("#apw").value===CONFIG.adminCode){sessionStorage.setItem('tl_admin','1');motslist();}else{$("#afb").textContent='Code incorrect.';$("#apw").value='';}};
+    $("#aok").onclick=tryp;$("#apw").addEventListener('keydown',e=>{if(e.key==='Enter')tryp();});$("#apw").focus();
+    return;
+  }
+  stage.innerHTML=`<div class="card"><span class="kicker">💌 Privé · juste pour toi</span><h1>Les mots reçus</h1>
+    <p class="muted" id="acount">Chargement…</p>
+    <div id="alist"></div>
+    <div id="awho" style="margin-top:14px"></div>
+    <div class="row"><button class="btn ghost" id="arefresh">🔄 Rafraîchir</button></div></div>`;
+  $("#arefresh").onclick=()=>loadAdminList();
+  loadAdminList();
+}
+async function loadAdminList(){
+  let mots=[];try{mots=await getMots();}catch(e){}
+  const all=[...CONFIG.cnps,...mots];
+  const avg=all.length?(all.reduce((s,c)=>s+(c.score==null?10:c.score),0)/all.length).toFixed(1):"·";
+  const cnt=$("#acount");if(cnt)cnt.innerHTML=`<b style="color:var(--navy)">${all.length}</b> mot${all.length>1?'s':''} reçu${all.length>1?'s':''} · cNPS moyen <b style="color:var(--navy)">${avg}</b>/10`;
+  const box=$("#alist");if(box)box.innerHTML=all.length?all.map(c=>`<div class="msg" style="text-align:left;margin:8px 0"><div class="who"><b>${esc(c.who)}</b> · ${c.score==null?10:c.score}/10</div><div class="note">${esc(c[lang]||c.fr||c.en||'')}</div></div>`).join(''):'<p class="muted">Aucun mot pour l\'instant.</p>';
+  const who=$("#awho");
+  if(who){const names=[...new Set(all.map(c=>(c.who||'').trim()).filter(Boolean))];
+    who.innerHTML=names.length?`<h2 style="margin-bottom:4px">Déjà reçu de (${names.length})</h2><p class="muted" style="margin-top:0">${names.map(esc).join(' · ')}</p><p class="muted" style="font-size:.85em">👉 Compare à ta liste d'équipe pour savoir qui relancer.</p>`:'';}
+}
 function getBest(){try{return +localStorage.getItem('tl_best')||0}catch(e){return 0}}
 function setBest(v){try{localStorage.setItem('tl_best',v)}catch(e){}}
 async function saveScore(rec){try{await fetch('/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});}catch(e){}}
@@ -948,6 +980,7 @@ function updateCountdown(){const cd=$("#cd");if(!cd)return;let d=new Date(CONFIG
 initMusic();
 if(location.hash==="#clear"){try{localStorage.removeItem('mots_laurina');alert('Notes locales effacées.');}catch(e){}location.hash='';}
 if(location.hash==="#mot"){S.motMode=true;S.view="addword";}
+if(location.hash==="#liste")S.view="motslist";
 if(S.motMode){['restartBtn','musicBtn','presBtn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none';});}
 else document.addEventListener("pointerdown",()=>toggleMusic(true),{once:true});
 setLang("fr");render();updateCountdown();setInterval(updateCountdown,1000);
