@@ -156,6 +156,21 @@
   .speech .chl .txt b{color:var(--navy)}
   /* livre souvenir imprimable */
   #book{display:none}
+  /* livre souvenir a l'ecran */
+  .bookview{max-width:920px;margin:0 auto}
+  .bookview .bp{background:#fff;border-radius:16px;padding:22px;margin:0 0 18px;box-shadow:0 10px 30px rgba(0,0,0,.16)}
+  .bookview .bp h2{color:var(--navy);border-bottom:3px solid var(--gold);padding-bottom:6px;margin:0 0 14px;font-size:1.25em}
+  .bookview .bcov{text-align:center;background:linear-gradient(160deg,#fffdf5,#fff7d9)}
+  .bookview .bcov img{max-width:min(60%,320px);border-radius:14px;border:5px solid var(--gold)}
+  .bookview .bcov h1{color:var(--navy);margin:14px 0 2px}
+  .bookview .bcov p{color:#5b6b86;margin:2px 0}
+  .bookview .bwords{columns:2;column-gap:14px}
+  @media(max-width:620px){.bookview .bwords{columns:1}}
+  .bookview .bmsg{break-inside:avoid;background:#fffdf2;border-left:4px solid var(--gold);border-radius:8px;padding:9px 11px;margin:0 0 10px;line-height:1.4}
+  .bookview .bmsg b{color:var(--navy);display:block;margin-bottom:2px}
+  .bookview .bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .bookview .bgrid img{width:100%;height:auto;border:6px solid #fff;border-radius:6px;box-shadow:0 2px 7px rgba(0,0,0,.22);cursor:pointer}
+  @media(max-width:620px){.bookview .bgrid{grid-template-columns:1fr 1fr}}
   @media print{
     @page{size:A4 landscape;margin:12mm}
     body>*{display:none !important}
@@ -186,6 +201,7 @@
   <div class="topbar">
     <div class="brand"><div style="display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.05"><img src="LN/logo-rubix.png" alt="RUBIX" style="height:30px;width:auto;border-radius:6px" onerror="this.outerHTML='<span class=\'dot\'></span> RUBIX'"><span style="font-size:11px;letter-spacing:1.5px;color:#FFD700;font-weight:bold;margin-top:3px">THE LAST TRAIL</span></div> <span class="cd" id="cd"></span></div>
     <div class="ctrls">
+      <button class="pill" id="bookBtn" title="Livre souvenir" style="display:none">📖 <span class="bklbl">Livre souvenir</span></button>
       <button class="pill" id="restartBtn" title="Recommencer">🔄</button>
       <button class="pill" id="musicBtn" title="Musique">🔇</button>
       <button class="pill" id="langFR">FR</button>
@@ -417,6 +433,8 @@ function render(){
   if(location.hash==='#mot'){S.motMode=true;S.view='addword';}   // visiteur "mot" : verrouille sur le formulaire, jamais le jeu
   if(!gateOK())return showGate();
   pickMusic(S.view);
+  const bb=document.getElementById('bookBtn');if(bb)bb.style.display=(!S.motMode&&localStorage.getItem('tl_done')==='1')?'':'none';
+  if(S.view==='book')return bookView();
   if(S.view==='intro')return intro();
   if(S.view==='map')return world();
   if(S.view==='play')return play();
@@ -845,6 +863,8 @@ function finish(){
   const prevBest=getBest();const isRec=S.total>prevBest;const best=Math.max(prevBest,S.total);
   if(isRec)setBest(S.total);
   saveScore({who:'Laurina',total:S.total,pct,km:S.km,steps:Object.keys(S.done).length});
+  try{localStorage.setItem('tl_done','1');localStorage.setItem('tl_total',S.total);localStorage.setItem('tl_km',S.km);localStorage.setItem('tl_dplus',S.dplus);}catch(e){}
+  const bbtn=document.getElementById('bookBtn');if(bbtn&&!S.motMode)bbtn.style.display='';
   const rank=pct>=90?(lang==='fr'?'🏆 Légende du trail':'🏆 Trail legend'):pct>=70?(lang==='fr'?'⛰️ Traileuse confirmée':'⛰️ Seasoned trailer'):pct>=50?(lang==='fr'?'🏃 Bonne grimpeuse':'🏃 Good climber'):(lang==='fr'?'🥾 En rodage':'🥾 Warming up');
   const recap=R.map(x=>`<div class="msg"><div class="who">${esc(x.who)} · ${x.km} km · +${x.dplus} m</div><b>${S.scores[x.id]||0}</b> / 1000 pts</div>`).join("");
   const gallery=`<h2 style="margin-top:20px">${t('galleryTitle')}</h2><div class="gallery">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}" onclick="openLB(this.src)" onerror="this.style.display='none'">`).join("")}</div>`;
@@ -870,16 +890,30 @@ function finish(){
   $("#replay").onclick=()=>{if(S.timer)clearInterval(S.timer);S={view:"intro",current:0,done:{},scores:{},km:0,dplus:0,total:0,timer:null,raph:{},lastShown:null,ravSeen:{}};render();};
   loadLetters();
 }
+function bookStats(){return {total:S.total||+localStorage.getItem('tl_total')||0,km:S.km||+localStorage.getItem('tl_km')||0,dplus:S.dplus||+localStorage.getItem('tl_dplus')||0};}
 async function printBook(){
   let mots=[];try{mots=await getMots();}catch(e){}
-  const msgs=[...CONFIG.cnps,...mots];
+  const msgs=[...CONFIG.cnps,...mots];const st=bookStats();
   let book=document.getElementById("book");
   if(!book){book=document.createElement("div");book.id="book";document.body.appendChild(book);}
-  const cover=`<section class="bpage bcover"><img src="${src(CONFIG.portrait)}"><h1>Le livre souvenir de Laurina</h1><p>RUBIX · The Last Trail 💛</p><p>${S.total} pts · ${S.km} km · +${S.dplus} m D+</p></section>`;
+  const cover=`<section class="bpage bcover"><img src="${src(CONFIG.portrait)}"><h1>Le livre souvenir de Laurina</h1><p>RUBIX · The Last Trail 💛</p><p>${st.total} pts · ${st.km} km · +${st.dplus} m D+</p></section>`;
   const words=msgs.length?`<section class="bpage"><h2>Les mots de l'équipe 💌</h2><div class="bwords">${msgs.map(m=>`<div class="bmsg"><b>${esc(m.who)}</b>${esc(m[lang]||m.fr||m.en||"")}</div>`).join("")}</div></section>`:"";
   const photos=`<section class="bpage"><h2>Les souvenirs 📸</h2><div class="bgrid">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}">`).join("")}</div></section>`;
   book.innerHTML=cover+words+photos;
   setTimeout(()=>window.print(),500);
+}
+async function bookView(){
+  let mots=[];try{mots=await getMots();}catch(e){}
+  const msgs=[...CONFIG.cnps,...mots];const st=bookStats();
+  const cover=`<section class="bp bcov"><img src="${src(CONFIG.portrait)}" onerror="this.style.display='none'"><h1>${lang==='fr'?'Le livre souvenir de Laurina':"Laurina's memory book"}</h1><p style="font-weight:bold;letter-spacing:1px">RUBIX · The Last Trail 💛</p><p>${st.total} pts · ${st.km} km · +${st.dplus} m D+</p></section>`;
+  const words=msgs.length?`<section class="bp"><h2>${lang==='fr'?"Les mots de l'équipe 💌":'Words from the team 💌'}</h2><div class="bwords">${msgs.map(m=>`<div class="bmsg"><b>${esc(m.who)}</b>${esc(m[lang]||m.fr||m.en||"")}</div>`).join("")}</div></section>`:"";
+  const photos=`<section class="bp"><h2>${lang==='fr'?'Les souvenirs 📸':'The memories 📸'}</h2><div class="bgrid">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}" onclick="openLB(this.src)" onerror="this.style.display='none'">`).join("")}</div></section>`;
+  stage.innerHTML=`<div class="card">
+    <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span class="kicker">📖 ${lang==='fr'?'Livre souvenir':'Memory book'}</span>
+      <div class="row" style="gap:8px"><button class="btn sm" id="bvprint">${t('printBook')}</button><button class="btn sm ghost" id="bvback">${lang==='fr'?'← Retour':'← Back'}</button></div></div>
+    <div class="bookview" style="margin-top:14px">${cover}${words}${photos}</div></div>`;
+  $("#bvprint").onclick=printBook;
+  $("#bvback").onclick=()=>{S.view=(firstOpenIdx()===-1)?'finish':'map';render();};
 }
 function lettersHtml(list){return list.map(c=>`<div class="letter">
   <div class="seal">💌</div><div class="lwho">${esc(c.who)}</div><div class="lhint">${lang==='fr'?'clique pour ouvrir':'click to open'}</div>
@@ -959,6 +993,7 @@ function addword(){stage.innerHTML=`${S.motMode?`<div style="text-align:center;m
 function setLang(l){lang=l;document.documentElement.lang=l;$("#langFR").classList.toggle("active",l==="fr");$("#langEN").classList.toggle("active",l==="en");render();}
 $("#langFR").onclick=()=>setLang("fr");$("#langEN").onclick=()=>setLang("en");
 $("#presBtn").onclick=()=>{document.body.classList.toggle("present");$("#presBtn").classList.toggle("active",document.body.classList.contains("present"));};
+$("#bookBtn").onclick=()=>{if(S.timer)clearInterval(S.timer);S.view="book";render();};
 $("#restartBtn").onclick=()=>{if(S.timer)clearInterval(S.timer);S={view:"intro",current:0,done:{},scores:{},km:0,dplus:0,total:0,timer:null,raph:{},lastShown:null,ravSeen:{}};render();};
 const cv=$("#confetti"),cx=cv.getContext("2d");let parts=[];
 function size(){cv.width=innerWidth;cv.height=innerHeight;}size();addEventListener("resize",size);
