@@ -909,6 +909,7 @@ function addword(){stage.innerHTML=`<div class="card"><span class="kicker">💌<
   <textarea id="awm" style="width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:1em;min-height:110px"></textarea>
   <label class="muted" style="display:block;margin-top:12px">${t('awScore')} : <b id="awsv">10</b>/10</label>
   <input type="range" id="aws" min="0" max="10" value="10" style="width:100%">
+  <p class="muted" style="font-size:.82em;margin-top:4px;font-style:italic">${lang==='fr'?"cNPS = <b>C</b>olleague <b>N</b>et <b>P</b>romoter <b>S</b>core 😉 (le NPS marketing, version collègues : pour une fois, c'est Laurina qu'on note !)":"cNPS = <b>C</b>olleague <b>N</b>et <b>P</b>romoter <b>S</b>core 😉 (the marketing NPS, colleague edition: for once, Laurina is the one being rated!)"}</p>
   <div id="awfb" style="margin-top:12px;font-weight:bold"></div>
   <div class="row"><button class="btn" id="awsend">${t('awSend')}</button>${S.motMode?'':`<button class="btn ghost" id="awback">${t('awBack')}</button>`}</div></div>`;
   $("#aws").oninput=e=>$("#awsv").textContent=e.target.value;
