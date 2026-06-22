@@ -899,8 +899,8 @@ function finish(){
     <div class="scorebig">${S.total} <span style="font-size:.5em;color:#5b6b86">/ ${MAX} pts</span></div>
     <p class="muted" style="font-size:1.1em"><b style="color:var(--navy)">${pct}%</b> · ${rank}</p>
     <p class="muted" style="font-size:1.02em">${isRec?'<b style="color:#e0457b">'+t('newRec')+'</b> · ':''}${t('bestLbl')} : <b style="color:var(--navy)">${best}</b> / ${MAX} pts</p>
-    <p class="muted" style="font-size:1.05em">🗓️ <b style="color:var(--navy)">3 ans</b> chez Rubix (36 mois) · ${S.km} km parcourus ensemble</p>
-    <p class="muted">+${S.dplus} m D+ · ${Object.keys(S.done).length}/${R.length} étapes</p>
+    <p class="muted" style="font-size:1.05em">🗓️ <b style="color:var(--navy)">${lang==='fr'?'3 ans':'3 years'}</b> ${lang==='fr'?`chez Rubix (36 mois) · ${S.km} km parcourus ensemble`:`at Rubix (36 months) · ${S.km} km walked together`}</p>
+    <p class="muted">+${S.dplus} m D+ · ${Object.keys(S.done).length}/${R.length} ${lang==='fr'?'étapes':'stages'}</p>
     <div style="margin-top:24px;text-align:left">
       <span class="kicker">${t('cnpsKicker')}</span><h2>${t('cnpsTitle')}</h2><p class="muted">${t('cnpsSub')}</p>
       <div class="npsbig"><span class="num" id="cnpsavg">·</span><span class="muted">${t('cnpsScoreWord')}</span></div>
@@ -1059,7 +1059,11 @@ function addword(){stage.innerHTML=`${S.motMode?`<div style="text-align:center;m
 }
 
 /* =========================== lang / present / confetti / music / cd =========================== */
-function setLang(l){lang=l;document.documentElement.lang=l;$("#langFR").classList.toggle("active",l==="fr");$("#langEN").classList.toggle("active",l==="en");render();}
+function setLang(l){lang=l;document.documentElement.lang=l;$("#langFR").classList.toggle("active",l==="fr");$("#langEN").classList.toggle("active",l==="en");
+  const bl=document.querySelector('#bookBtn .bklbl');if(bl)bl.textContent=(l==='fr'?'Livre souvenir':'Memory book');
+  const map={restartBtn:[l==='fr'?'Recommencer':'Restart'],musicBtn:[l==='fr'?'Musique':'Music'],bookBtn:[l==='fr'?'Livre souvenir':'Memory book'],presBtn:[l==='fr'?'Mode présentation':'Presentation mode']};
+  Object.keys(map).forEach(id=>{const b=document.getElementById(id);if(b)b.title=map[id][0];});
+  render();}
 $("#langFR").onclick=()=>setLang("fr");$("#langEN").onclick=()=>setLang("en");
 $("#presBtn").onclick=()=>{document.body.classList.toggle("present");$("#presBtn").classList.toggle("active",document.body.classList.contains("present"));};
 $("#bookBtn").onclick=()=>{if(S.timer)clearInterval(S.timer);S.view="book";render();};
