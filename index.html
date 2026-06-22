@@ -981,7 +981,7 @@ initMusic();
 if(location.hash==="#clear"){try{localStorage.removeItem('mots_laurina');alert('Notes locales effacées.');}catch(e){}location.hash='';}
 if(location.hash==="#mot"){S.motMode=true;S.view="addword";}
 if(location.hash==="#liste")S.view="motslist";
-if(S.motMode){['restartBtn','musicBtn','presBtn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none';});}
+if(S.motMode){['restartBtn','musicBtn','presBtn','cd'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none';});}
 else document.addEventListener("pointerdown",()=>toggleMusic(true),{once:true});
 setLang("fr");render();updateCountdown();setInterval(updateCountdown,1000);
 </script>
