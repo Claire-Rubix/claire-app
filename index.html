@@ -479,7 +479,7 @@ function world(){
     actors+=`<div class="actor ${done?'met':''} ${isObj?'obj':''}" style="left:${stopX(i)}px;bottom:${52+terrainY(stopX(i))}px">
       <div class="av"><span>${initial(r.who)}</span>${faceImg(r.face)}</div>
       <div class="nameplate">${esc(r.who)}${done?' ✅':(isObj?' ❗':'')}</div><div class="ashadow"></div></div>`;});
-  const showRa=allDone||!(R[open]&&R[open].copilot);
+  const showRa=(open===0);   // Raphael apparait UNE fois, avant Maite ; ensuite Laurina avance seule
   const me=`${showRa?`<div class="actor rapha"><div class="av"><span>${initial(CONFIG.copilot.name)}</span>${faceImg(CONFIG.copilot.face)}</div><div class="nameplate">${esc(CONFIG.copilot.name)} 💡</div><div class="ashadow"></div></div>`:''}
     <div class="actor me"><div class="av"><span>L</span>${faceImg(CONFIG.portrait)}</div><div class="nameplate me">Laurina 🥾</div><div class="ashadow"></div></div>`;
   const waterDiv=TH.water?`<div class="water" style="background:linear-gradient(180deg,${TH.water},#2f86b8)"></div>`:"";
@@ -521,7 +521,7 @@ function world(){
     if(allDone&&focus===R.length){sp.innerHTML=`<div class="chl"><div class="txt">🏁 <b>${lang==='fr'?'Sommet en vue !':'Summit in sight!'}</b></div></div>`;
       nav.innerHTML=`${prevBtn}<button class="btn" id="toSummit">${t('summitBtn')}</button>`;$("#toSummit").onclick=()=>{S.browse=null;S.view="finish";render();};bindNav();return;}
     const r=R[focus];
-    if(focus===open){const intro=(open===0)?`<div class="raphline">💡 <b>${esc(CONFIG.copilot.name)}</b> ${lang==='fr'?'t’aide si tu bloques.':'helps if you’re stuck.'}</div>`:"";
+    if(focus===open){const intro=(open===0)?`<div class="raphline">💡 <b>${esc(CONFIG.copilot.name)}</b> ${lang==='fr'?': je reste dispo pour un coup de pouce sur les défis. Je te laisse avancer, bonne route 💪':": I'll stay around for a hint on the challenges. Off you go, enjoy 💪"}</div>`:"";
       sp.innerHTML=`${intro}<div class="chl"><div class="spkav">${faceImg(r.face)}</div><div class="txt"><b>${esc(r.who)}</b> ${t('hasChallenge')}</div></div>`;
       nav.innerHTML=`${prevBtn}<button class="btn" id="talk">${t('talk')} ${esc(r.who)} 💬</button>${nextBtn}`;
       $("#talk").onclick=()=>{S.browse=null;S.current=open;S.view="play";render();};}
