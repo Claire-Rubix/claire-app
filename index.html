@@ -175,7 +175,6 @@
     .bgrid img:nth-child(even){transform:rotate(1.6deg)}
   }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
@@ -250,12 +249,12 @@ const CONFIG = {
 
     { id:"r4b", who:"Guillaume", face:"LN/Guillaume.jpg", km:20, dplus:480, game:"detail",
       photo:"LN/Photo équipe 070224 fun.jpg",
-      qFR:"Combien de doigts LEVÉS y a-t-il sur cette photo ? (signes de paix, mains en l'air…)",
-      qEN:"How many RAISED fingers are there in this photo? (peace signs, hands up…)",
-      optFR:["16","12","20","24"],
-      optEN:["16","12","20","24"], correct:0,
-      tipFR:"Zoome sur la photo et compte chaque main levée…",tipEN:"Zoom in and count each raised hand…",
-      revealFR:"16 doigts en l'air ! Fallait avoir l'œil.",revealEN:"16 raised fingers! Sharp eye." },
+      qFR:"Combien de doigts y a-t-il sur cette photo ?",
+      qEN:"How many fingers are there in this photo?",
+      optFR:["100","16","52","30"],
+      optEN:["100","16","52","30"], correct:0,
+      tipFR:"Compte calmement… vraiment tout.",tipEN:"Count calmly… really everything.",
+      revealFR:"100 : 10 personnes × 10 doigts. Beaucoup comptent les doigts levés et tombent dans le panneau !",revealEN:"100: 10 people × 10 fingers. Many count only the raised fingers and fall for it!" },
 
     { id:"r5", who:"Michal", face:"LN/Michal.jpg", km:22, dplus:700, game:"anagram",
       word:"TRAILEUSE", scrambled:"U · E · L · I · A · R · T · S · E",
@@ -866,11 +865,16 @@ async function loadLetters(){try{const live=await getMots();const all=[...CONFIG
   const a=$("#cnpsavg");if(a)a.textContent=all.length?(all.reduce((s,c)=>s+(c.score||10),0)/all.length).toFixed(1):"·";}catch(e){}}
 
 /* =========================== mots doux =========================== */
-let sb=null;
-function getSb(){if(sb!==null)return sb;if(CONFIG.supabase&&CONFIG.supabase.url&&window.supabase){try{sb=window.supabase.createClient(CONFIG.supabase.url,CONFIG.supabase.anonKey);}catch(e){sb=false;}}else sb=false;return sb;}
+const MOTS_API="/api/mots";
 function lsMots(){try{return JSON.parse(localStorage.getItem('mots_laurina')||'[]')}catch(e){return[]}}
-async function addMot(m){const c=getSb();if(c){const {error}=await c.from(CONFIG.supabase.table).insert([{who:m.who,note:m.note,score:m.score}]);if(error)throw error;}else{const a=lsMots();a.push(m);localStorage.setItem('mots_laurina',JSON.stringify(a));}}
-async function getMots(){const c=getSb();if(c){const {data,error}=await c.from(CONFIG.supabase.table).select('who,note,score').order('id',{ascending:true});if(error)return [];return (data||[]).map(r=>({who:r.who,fr:r.note,en:r.note,score:r.score??10}));}return lsMots().map(r=>({who:r.who,fr:r.note,en:r.note,score:r.score??10}));}
+async function addMot(m){
+  try{const r=await fetch(MOTS_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({who:m.who,note:m.note,score:m.score})});if(!r.ok)throw 0;return;}
+  catch(e){const a=lsMots();a.push(m);localStorage.setItem('mots_laurina',JSON.stringify(a));}
+}
+async function getMots(){
+  try{const r=await fetch(MOTS_API,{cache:'no-store'});if(!r.ok)throw 0;const data=await r.json();return (data||[]).map(x=>({who:x.who,fr:x.note,en:x.note,score:(x.score==null?10:x.score)}));}
+  catch(e){return lsMots().map(r=>({who:r.who,fr:r.note,en:r.note,score:(r.score==null?10:r.score)}));}
+}
 function addword(){stage.innerHTML=`<div class="card"><span class="kicker">💌</span><h1>${t('awTitle')}</h1>
   <label class="muted">${t('awName')}</label><input type="text" id="awn">
   <label class="muted" style="display:block;margin-top:12px">${t('awMsg')}</label>
