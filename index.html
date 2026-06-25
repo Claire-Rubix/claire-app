@@ -790,7 +790,7 @@ function memory(r){
   let deck=[];faces.forEach((f,i)=>{deck.push({...f,pid:i});deck.push({...f,pid:i});});
   // melange deterministe
   deck=deck.map((c,i)=>({c,k:(i*7+3)%deck.length})).sort((a,b)=>a.k-b.k).map(x=>x.c);
-  const total=45;let left=total,first=null,lock=false,matched=0,answered=false,pts=1000;
+  const total=70;let left=total,first=null,lock=false,matched=0,answered=false,pts=1000;
   stage.innerHTML=hud()+`<div class="card">
     <span class="kicker">${t('challengeOf')} ${esc(r.who)}</span>
     <h2>🃏 ${r.memoryCards?(lang==='fr'?'Memory des souvenirs':'Photo memory'):t('memoryTitle')}</h2><p class="muted">${r["sub"+up()]||t('memorySub')} <b id="chrono">${left}s</b></p>
