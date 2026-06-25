@@ -1028,7 +1028,7 @@ function gifts(){
     <div class="wheelwrap"><div class="wpointer"></div><div class="wheel" id="wheel" style="background:conic-gradient(${grad})">${labels}</div><div class="wcap"></div></div>
     <div class="wdots" id="wdots">${G.map((g,i)=>`<span class="wdot" data-i="${i}">?</span>`).join('')}</div>
     <div class="row" style="justify-content:center"><button class="btn" id="spinBtn">${t('giftSpin')}</button></div>
-    <div class="giftsdone" id="giftsdone">💛 ${lang==='fr'?'Joyeux départ, Laurina ! Profite bien de chaque cadeau.':'Happy send-off, Laurina! Enjoy every gift.'}</div>
+    <div class="giftsdone" id="giftsdone">💛 ${lang==='fr'?'En route pour de nouvelles aventures, Laurina ! 🏔️':'Off to new adventures, Laurina! 🏔️'}</div>
     <div class="row" style="justify-content:center;margin-top:18px"><button class="btn ghost" id="giftsBack">${t('giftsBack')}</button></div></div>`;
   let rot=0,spinning=false;const revealed=new Set();
   const wheel=$("#wheel"),spinBtn=$("#spinBtn");
