@@ -104,6 +104,11 @@
   .lightbox{display:none;position:fixed;inset:0;background:rgba(5,15,40,.93);z-index:60;align-items:center;justify-content:center;cursor:zoom-out;flex-direction:column;gap:14px}
   .lightbox.on{display:flex}.lightbox img{max-width:92vw;max-height:84vh;border-radius:12px;border:3px solid var(--gold);box-shadow:0 20px 60px rgba(0,0,0,.6)}
   .lightbox .lbnav{color:#fff;font-size:.9em;opacity:.8}
+  .lbarrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);color:#fff;font-size:1.5em;width:54px;height:54px;border-radius:50%;cursor:pointer;z-index:62;display:none;align-items:center;justify-content:center}
+  .lightbox.gallery .lbarrow{display:flex}
+  #lbprev{left:14px}#lbnext{right:14px}
+  .lbarrow:hover{background:rgba(255,255,255,.32)}
+  @media(max-width:560px){.lbarrow{width:44px;height:44px;font-size:1.2em}#lbprev{left:6px}#lbnext{right:6px}}
   .lettermodal{display:none;position:fixed;inset:0;background:rgba(5,15,40,.9);z-index:70;align-items:center;justify-content:center;padding:18px}
   .lettermodal.on{display:flex}
   .lmcard{position:relative;background:linear-gradient(135deg,#fffdf5,#fff7d9);border:2px solid var(--gold);border-radius:18px;padding:28px 26px;max-width:520px;width:100%;max-height:84vh;overflow:auto;box-shadow:0 30px 70px rgba(0,0,0,.5);text-align:center;animation:pop .3s}
@@ -239,7 +244,7 @@
 </head>
 <body>
   <div class="skybg"></div>
-  <div class="lightbox" id="lightbox"><img id="lbimg" src=""><div class="lbnav" id="lbnav">clique pour fermer</div></div>
+  <div class="lightbox" id="lightbox"><button class="lbarrow" id="lbprev">◀</button><img id="lbimg" src=""><button class="lbarrow" id="lbnext">▶</button><div class="lbnav" id="lbnav">clique pour fermer</div></div>
   <canvas id="confetti"></canvas>
   <audio id="bgm" loop preload="none"></audio>
   <div class="topbar">
@@ -481,8 +486,14 @@ function hud(){const v=Object.keys(S.done).length;return `<div class="hud">
   <div class="stat"><b>${S.total}</b><span>${t('hudPts')}</span></div></div>`;}
 function firstOpenIdx(){for(let i=0;i<CONFIG.ravitos.length;i++)if(!S.done[CONFIG.ravitos[i].id])return i;return -1;}
 function esc(s){return (s+"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-function openLB(s,f){const lb=$("#lightbox");if(!lb)return;const im=$("#lbimg");im.src=s;im.style.filter=f||'none';const n=$("#lbnav");if(n)n.textContent=lang==='fr'?'clique pour fermer':'click to close';lb.classList.add("on");}
-$("#lightbox").onclick=()=>$("#lightbox").classList.remove("on");
+function openLB(s,f){const lb=$("#lightbox");if(!lb)return;const im=$("#lbimg");im.src=s;im.style.filter=f||'none';const n=$("#lbnav");if(n)n.textContent=lang==='fr'?'clique pour fermer':'click to close';lb.classList.remove("gallery");lb.classList.add("on");}
+let GALi=0;
+function galList(){return (CONFIG.galleryPhotos||[]);}
+function openGallery(i){const lb=$("#lightbox");if(!lb)return;const L=galList();if(!L.length)return;GALi=((i%L.length)+L.length)%L.length;const im=$("#lbimg");im.src=src(L[GALi]);im.style.filter='none';const n=$("#lbnav");if(n)n.textContent=(lang==='fr'?'clique pour fermer':'click to close')+` · ${GALi+1}/${L.length}`;lb.classList.add("on","gallery");}
+$("#lightbox").onclick=e=>{if(e.target.closest('.lbarrow'))return;$("#lightbox").classList.remove("on","gallery");};
+$("#lbprev").onclick=e=>{e.stopPropagation();openGallery(GALi-1);};
+$("#lbnext").onclick=e=>{e.stopPropagation();openGallery(GALi+1);};
+document.addEventListener('keydown',e=>{const lb=$("#lightbox");if(!lb||!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on','gallery');if(lb.classList.contains('gallery')){if(e.key==='ArrowLeft')openGallery(GALi-1);if(e.key==='ArrowRight')openGallery(GALi+1);}});
 function faceImg(path){return `<img src="${src(path)}" onerror="this.style.display='none'">`;}
 
 /* =========================== ROUTER =========================== */
@@ -938,7 +949,7 @@ function finish(){
   const bbtn=document.getElementById('bookBtn');if(bbtn&&!S.motMode)bbtn.style.display='';
   const rank=pct>=90?(lang==='fr'?'🏆 Légende du trail':'🏆 Trail legend'):pct>=70?(lang==='fr'?'⛰️ Traileuse confirmée':'⛰️ Seasoned trailer'):pct>=50?(lang==='fr'?'🏃 Bonne grimpeuse':'🏃 Good climber'):(lang==='fr'?'🥾 En rodage':'🥾 Warming up');
   const recap=R.map(x=>`<div class="msg"><div class="who">${esc(x.who)} · ${x.km} km · +${x.dplus} m</div><b>${S.scores[x.id]||0}</b> / 1000 pts</div>`).join("");
-  const gallery=`<details class="acc"><summary>📸 ${t('galleryTitle')}</summary><div class="accbody"><div class="gallery">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}" onclick="openLB(this.src)" onerror="this.style.display='none'">`).join("")}</div></div></details>`;
+  const gallery=`<details class="acc" open><summary>📸 ${t('galleryTitle')}</summary><div class="accbody"><div class="gallery">${CONFIG.galleryPhotos.map((p,i)=>`<img src="${src(p)}" onclick="openGallery(${i})" onerror="this.style.display='none'">`).join("")}</div></div></details>`;
   const giftsCTA=(CONFIG.gifts&&CONFIG.gifts.length)?`<div style="margin-top:24px"><button class="btn" id="toGifts" style="font-size:1.12em;padding:16px 26px">${t('giftsBtn')}</button></div>`:'';
   const cagnotte=CONFIG.cagnotteURL?`<a class="btn" href="${CONFIG.cagnotteURL}" target="_blank" style="text-decoration:none">${t('cagnotte')}</a>`:"";
   stage.innerHTML=hud()+`<div class="card" style="text-align:center">
@@ -1021,7 +1032,7 @@ async function renderBook(){
   const msgs=[...CONFIG.cnps,...mots];const st=bookStats();
   const cover=`<section class="bp bcov"><img src="${src(CONFIG.portrait)}" onerror="this.style.display='none'"><h1>${lang==='fr'?'Le livre souvenir de Laurina':"Laurina's memory book"}</h1><p style="font-weight:bold;letter-spacing:1px">RUBIX · The Last Trail 💛</p><p>${st.total} pts · ${st.km} km · +${st.dplus} m D+</p></section>`;
   const words=msgs.length?`<section class="bp"><h2>${lang==='fr'?"Les mots de l'équipe 💌":'Words from the team 💌'}</h2><div class="bwords">${msgs.map(m=>`<div class="bmsg"><b>${esc(m.who)}</b>${esc(m[lang]||m.fr||m.en||"")}</div>`).join("")}</div></section>`:"";
-  const photos=`<section class="bp"><h2>${lang==='fr'?'Les souvenirs 📸':'The memories 📸'}</h2><div class="bgrid">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}" onclick="openLB(this.src)" onerror="this.style.display='none'">`).join("")}</div></section>`;
+  const photos=`<section class="bp"><h2>${lang==='fr'?'Les souvenirs 📸':'The memories 📸'}</h2><div class="bgrid">${CONFIG.galleryPhotos.map((p,i)=>`<img src="${src(p)}" onclick="openGallery(${i})" onerror="this.style.display='none'">`).join("")}</div></section>`;
   stage.innerHTML=`<div class="card">
     <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><span class="kicker">📖 ${lang==='fr'?'Livre souvenir':'Memory book'}</span>
       <div class="row" style="gap:8px"><button class="btn sm" id="bvprint">${t('printBook')}</button><button class="btn sm ghost" id="bvback">${lang==='fr'?'← Retour':'← Back'}</button></div></div>
