@@ -117,28 +117,24 @@
   .lmwho{font-weight:bold;color:var(--navy);font-size:1.35em;margin-top:2px}
   .lmscore{display:inline-block;background:var(--navy);color:var(--gold);border-radius:999px;padding:3px 12px;font-size:.82em;font-weight:bold;margin:10px 0}
   .lmnote{margin-top:8px;line-height:1.55;color:var(--ink);text-align:left;white-space:pre-wrap;font-size:1.02em}
-  /* cadeaux */
-  .gifts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
-  @media(max-width:560px){.gifts{grid-template-columns:1fr}}
-  .gift{position:relative;border-radius:18px;padding:22px 18px;text-align:center;cursor:pointer;overflow:hidden;background:linear-gradient(155deg,#0a2d6e,#143a78);color:#fff;border:2px solid var(--gold);box-shadow:0 12px 28px rgba(0,0,0,.32);transition:transform .2s;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .gift::after{content:"";position:absolute;top:-60%;left:-30%;width:60%;height:220%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:rotate(20deg);animation:giftshine 3.4s ease-in-out infinite}
-  @keyframes giftshine{0%{left:-40%}60%,100%{left:130%}}
-  .gift:hover{transform:translateY(-4px)}
-  .gift .gbox{font-size:3.6em;line-height:1;animation:giftbob 2.2s ease-in-out infinite}
-  @keyframes giftbob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
-  .gift .ghint{margin-top:10px;font-style:italic;color:#ffe9a8;font-size:.96em}
-  .gift .gopen{margin-top:14px;background:var(--gold);color:var(--navy);font-weight:bold;border-radius:999px;padding:7px 18px;font-size:.84em}
-  .gift .reveal{display:none}
-  .gift.opened{background:#fff;color:var(--ink);border-color:var(--gold)}
-  .gift.opened::after{display:none}
-  .gift.opened .wrap{display:none}
-  .gift.opened .reveal{display:flex;flex-direction:column;align-items:center;animation:pop .45s cubic-bezier(.2,.9,.3,1.3)}
-  .gift.opened .gbox{animation:giftpop .5s;font-size:4em}
+  /* roue des cadeaux */
+  .wheelwrap{position:relative;width:min(300px,82vw);aspect-ratio:1;margin:18px auto 4px}
+  .wheel{width:100%;height:100%;border-radius:50%;position:relative;border:8px solid var(--navy);box-shadow:0 14px 32px rgba(0,0,0,.35),inset 0 0 0 4px #fff;transition:transform 3.6s cubic-bezier(.12,.72,.1,1)}
+  .wlabel{position:absolute;top:50%;left:50%;margin:-18px 0 0 -18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.8em;filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
+  .wcap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:#fff;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.35em;z-index:3;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .wpointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:28px solid var(--gold);z-index:4;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+  .wdots{display:flex;gap:10px;justify-content:center;margin:12px 0 4px;flex-wrap:wrap}
+  .wdot{width:36px;height:36px;border-radius:50%;background:#e6ebf5;display:flex;align-items:center;justify-content:center;font-size:1.15em;filter:grayscale(1) opacity(.5);transition:.25s}
+  .wdot.lit{filter:none;background:#fff7d6;box-shadow:0 3px 10px rgba(0,0,0,.18);transform:scale(1.1)}
+  .wreveal{display:none;margin-top:14px}
+  .wreveal.on{display:block;animation:pop .45s cubic-bezier(.2,.9,.3,1.3)}
+  .wcard{background:#fff;border:3px solid var(--gold);border-radius:16px;padding:18px;max-width:430px;margin:0 auto;text-align:center}
+  .wcard .gbox{font-size:3.4em;line-height:1;animation:giftpop .5s}
   @keyframes giftpop{0%{transform:scale(.3) rotate(-20deg)}70%{transform:scale(1.15) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
-  .gift .gname{font-weight:bold;color:var(--navy);font-size:1.12em;margin-top:8px;line-height:1.2}
-  .gift .ghint2{margin-top:6px;font-style:italic;color:#8a6d1a;font-size:.92em}
-  .gift .glink{margin-top:12px;background:var(--navy);color:var(--gold);text-decoration:none;border-radius:999px;padding:8px 18px;font-weight:bold;font-size:.85em}
-  .gift .glink:hover{filter:brightness(1.15)}
+  .wcard .gname{font-weight:bold;color:var(--navy);font-size:1.15em;margin-top:8px;line-height:1.2}
+  .wcard .ghint2{margin-top:6px;font-style:italic;color:#8a6d1a;font-size:.94em}
+  .wcard .glink,.wcard .gdescbtn{margin-top:12px;display:inline-block;border:none;cursor:pointer;font-family:inherit;background:var(--navy);color:var(--gold);text-decoration:none;border-radius:999px;padding:9px 18px;font-weight:bold;font-size:.85em}
+  .wcard .glink:hover,.wcard .gdescbtn:hover{filter:brightness(1.15)}
   /* accordeons */
   details.acc{margin-top:14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
   details.acc>summary{cursor:pointer;list-style:none;padding:13px 16px;font-weight:bold;color:var(--navy);background:#f4f7fc;user-select:none}
@@ -388,8 +384,22 @@ const CONFIG = {
     { icon:"🧦", nameFR:"Chaussettes de sport surprise", nameEN:"Surprise sports socks",
       hintFR:"pour courir toujours avec nous", hintEN:"to always run with us", url:"" },
     { icon:"🪂", nameFR:"Baptême de parapente — Chamonix Mont-Blanc", nameEN:"Paragliding flight — Chamonix Mont-Blanc",
-      hintFR:"pour couper avec sérénité", hintEN:"to switch off with serenity",
-      url:"https://www.sport-decouverte.com/bapteme-parapente-chamonix-mont-blanc.html" },
+      hintFR:"pour couper avec sérénité", hintEN:"to switch off with serenity", url:"", img:"LN/parapente.jpg",
+      descFR:`Les monts enneigés de Chamonix en parapente
+Déjà majestueux quand on l'observe depuis les pistes de ski ou la route, le mont Blanc l'est encore plus lorsqu'on le côtoie depuis le ciel. À Chamonix en Haute-Savoie, vous embarquez pour un baptême de l'air en parapente. Vous vivrez un moment magique en altitude, en observant toute la chaîne alpine, revêtue d'un manteau blanc en saison hivernale.
+
+Lieux survolés
+Le vol Découverte de 20 minutes (Plan de Praz) est réalisé avec un dénivelé de 1100 m. Vous découvrez la vallée et pouvez voir le mont Blanc, Les Drus, les glaciers, l'Aiguille du Midi et tout le massif du Mont-Blanc.
+
+Votre programme
+• Accueil au centre par le moniteur, qui vérifie votre tenue avant de partir vers le site de décollage.
+• Préparation du matériel et points de sécurité ; équipé du harnais et briefé, vous montez dans la sellette.
+• Décollage en courant sur quelques mètres ; le pilote utilise les courants ascendants.
+• Vue imprenable sur la vallée de Chamonix et le mont Blanc.
+• Descente en douceur et retour sur la terre ferme.
+
+À partir de 4 ans, mineurs avec autorisation parentale. Poids max. 100 kg. Casque fourni. Prévoir 2h d'activité au total.`,
+      descEN:`Snow-capped Chamonix peaks by paraglider. A 20-min discovery flight (Plan de Praz, 1100 m drop): the valley, Mont Blanc, Les Drus, the glaciers, the Aiguille du Midi and the whole Mont-Blanc massif. Greeted by your instructor, geared up and briefed, a short run to take off, then a smooth glide and gentle landing. From age 4, max 100 kg, helmet provided, allow 2h.` },
     { icon:"⛺", nameFR:"Tarp de trekking MT900 (Decathlon)", nameEN:"MT900 trekking tarp (Decathlon)",
       hintFR:"pour des aventures en famille", hintEN:"for family adventures", url:"" },
     { icon:"💚👕", nameFR:"Un maillot de l'AS Saint-Étienne", nameEN:"An AS Saint-Étienne jersey",
@@ -439,7 +449,7 @@ const I18N={
     cnpsLetters:"Tes lettres à ouvrir 💌",cnpsOpenHint:"Clique sur une enveloppe pour lire le mot.",cnpsEmpty:"Les mots de tes collègues apparaîtront ici. 💌",
     cagnotte:"La cagnotte 🎁",replay:"Refaire le trail",galleryTitle:"Tous les souvenirs",timeUp:"⏱️ Temps écoulé !",printBook:"Imprimer le livre 📖",
     bestLbl:"Meilleur score",newRec:"🏆 Nouveau record !",
-    giftsBtn:"🎁 Découvre tes cadeaux",giftsTitle:"Tes cadeaux 🎁",giftsIntro:"Le trail est terminé… place aux cadeaux ! Clique sur chaque boîte pour la déballer.",giftOpen:"Ouvrir 🎁",giftSee:"Voir le cadeau ↗",giftsBack:"← Retour",
+    giftsBtn:"🎁 Découvre tes cadeaux",giftsTitle:"Tes cadeaux",giftsIntro:"Tourne la roue pour découvrir tes cadeaux un par un !",giftSpin:"Tourner la roue",giftSpinAgain:"Tourner encore",giftDesc:"Voir la description",giftSee:"Voir le cadeau ↗",giftsBack:"← Retour",
     awBtn:"✍️ Ajouter un mot",awTitle:"Laisse un mot doux à Laurina",awName:"Ton prénom",awMsg:"Ton petit mot",awScore:"Ta note cNPS",
     awSend:"Envoyer 💌",awBack:"← Retour",awThanks:"Merci ! Ton mot apparaîtra à la fin du trail de Laurina. 💛",awErr:"Oups, envoi impossible. Réessaie.",awEmpty:"Écris au moins ton prénom et un petit mot.",
     introSkip:"Passer l'intro ▶︎",introStart:"Commencer l'aventure 🥾",
@@ -460,7 +470,7 @@ const I18N={
     cnpsLetters:"Your letters to open 💌",cnpsOpenHint:"Click an envelope to read the note.",cnpsEmpty:"Your colleagues' words will appear here. 💌",
     cagnotte:"The gift fund 🎁",replay:"Run it again",galleryTitle:"All the memories",timeUp:"⏱️ Time's up!",printBook:"Print the memory book 📖",
     bestLbl:"Best score",newRec:"🏆 New record!",
-    giftsBtn:"🎁 Discover your gifts",giftsTitle:"Your gifts 🎁",giftsIntro:"The trail is over… time for gifts! Click each box to unwrap it.",giftOpen:"Open 🎁",giftSee:"See the gift ↗",giftsBack:"← Back",
+    giftsBtn:"🎁 Discover your gifts",giftsTitle:"Your gifts",giftsIntro:"Spin the wheel to discover your gifts one by one!",giftSpin:"Spin the wheel",giftSpinAgain:"Spin again",giftDesc:"See the description",giftSee:"See the gift ↗",giftsBack:"← Back",
     awBtn:"✍️ Add a word",awTitle:"Leave a sweet word for Laurina",awName:"Your first name",awMsg:"Your little note",awScore:"Your cNPS score",
     awSend:"Send 💌",awBack:"← Back",awThanks:"Thank you! Your note will appear at the end of Laurina's trail. 💛",awErr:"Oops, couldn't send. Try again.",awEmpty:"Write at least your first name and a note.",
     introSkip:"Skip intro ▶︎",introStart:"Start the adventure 🥾",
@@ -980,25 +990,51 @@ function floatEmojis(list,n){n=n||32;for(let i=0;i<n;i++){const s=document.creat
   s.style.left=(Math.random()*96)+'vw';s.style.fontSize=(1.4+Math.random()*2)+'em';
   const dur=2.8+Math.random()*2.4;s.style.animationDuration=dur+'s';s.style.animationDelay=(Math.random()*0.7)+'s';
   s.style.setProperty('--r',(Math.random()*140-70)+'deg');document.body.appendChild(s);setTimeout(()=>s.remove(),(dur+1)*1000);}}
+const GIFT_COLORS=['#2f6fed','#f59e0b','#16a34a','#a855f7','#e0457b','#0ea5b7'];
+function openGiftDesc(g){
+  let m=document.getElementById('descmodal');
+  if(!m){m=document.createElement('div');m.id='descmodal';m.className='lettermodal';document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');});}
+  const desc=(lang==='fr'?g.descFR:(g.descEN||g.descFR))||'';
+  m.innerHTML=`<div class="lmcard"><button class="lmclose" id="dmx">✕</button>${g.img?`<img src="${src(g.img)}" style="width:100%;border-radius:12px;margin-bottom:12px" onerror="this.style.display='none'">`:''}<div class="lmwho">${g.icon} ${esc(lang==='fr'?g.nameFR:g.nameEN)}</div><div class="lmnote">${esc(desc)}</div></div>`;
+  m.classList.add('on');const x=document.getElementById('dmx');if(x)x.onclick=()=>m.classList.remove('on');
+}
 function gifts(){
-  const G=CONFIG.gifts||[];
+  const G=CONFIG.gifts||[];const n=G.length,seg=360/n;
+  const grad=G.map((g,i)=>`${GIFT_COLORS[i%GIFT_COLORS.length]} ${i*seg}deg ${(i+1)*seg}deg`).join(',');
+  const labels=G.map((g,i)=>{const a=i*seg+seg/2;return `<span class="wlabel" style="transform:rotate(${a}deg) translateY(-86px) rotate(${-a}deg)">${g.icon}</span>`;}).join('');
   stage.innerHTML=hud()+`<div class="card" style="text-align:center">
-    <span class="kicker">🎁</span><h1>${t('giftsTitle')}</h1>
+    <span class="kicker">🎡</span><h1>${t('giftsTitle')}</h1>
     <p class="muted">${t('giftsIntro')}</p>
-    <div class="gifts">${G.map((g,i)=>`<div class="gift" data-i="${i}">
-      <div class="wrap"><div class="gbox">🎁</div><div class="ghint">« ${esc(lang==='fr'?g.hintFR:g.hintEN)} »</div><div class="gopen">${t('giftOpen')}</div></div>
-      <div class="reveal"><div class="gbox">${g.icon}</div><div class="gname">${esc(lang==='fr'?g.nameFR:g.nameEN)}</div><div class="ghint2">« ${esc(lang==='fr'?g.hintFR:g.hintEN)} »</div>${g.url?`<a class="glink" href="${g.url}" target="_blank" rel="noopener">${t('giftSee')}</a>`:''}</div></div>`).join("")}</div>
+    <div class="wheelwrap"><div class="wpointer"></div><div class="wheel" id="wheel" style="background:conic-gradient(${grad})">${labels}</div><div class="wcap">🎁</div></div>
+    <div class="wdots" id="wdots">${G.map((g,i)=>`<span class="wdot" data-i="${i}">${g.icon}</span>`).join('')}</div>
+    <div class="row" style="justify-content:center"><button class="btn" id="spinBtn">🎡 ${t('giftSpin')}</button></div>
+    <div class="wreveal" id="wreveal"></div>
     <div class="giftsdone" id="giftsdone">💛 ${lang==='fr'?'Joyeux départ, Laurina ! Profite bien de chaque cadeau.':'Happy send-off, Laurina! Enjoy every gift.'}</div>
-    <div class="row" style="justify-content:center;margin-top:20px"><button class="btn ghost" id="giftsBack">${t('giftsBack')}</button></div></div>`;
-  stage.querySelectorAll('.gift').forEach(el=>{el.addEventListener('click',e=>{
-    if(el.classList.contains('opened'))return;
-    if(e.target.tagName==='A')return;
-    el.classList.add('opened');burst(18);try{sfx('good');}catch(_){}
-    if(stage.querySelectorAll('.gift.opened').length===G.length){
-      const d=$("#giftsdone");if(d)d.classList.add('on');
-      setTimeout(()=>{floatEmojis(['🎁','🎉','💛','🧦','🪂','⛺','💚','🏃‍♀️','⛰️','✨'],38);try{bigBurst();}catch(_){}},250);
-    }
-  });});
+    <div class="row" style="justify-content:center;margin-top:18px"><button class="btn ghost" id="giftsBack">${t('giftsBack')}</button></div></div>`;
+  let rot=0,spinning=false;const revealed=new Set();
+  const wheel=$("#wheel"),spinBtn=$("#spinBtn");
+  function reveal(i){
+    revealed.add(i);const g=G[i],col=GIFT_COLORS[i%GIFT_COLORS.length];
+    burst(16);try{sfx('good');}catch(_){}
+    const dot=document.querySelector(`.wdot[data-i="${i}"]`);if(dot)dot.classList.add('lit');
+    const rv=$("#wreveal");
+    rv.innerHTML=`<div class="wcard" style="border-color:${col}"><div class="gbox">${g.icon}</div><div class="gname">${esc(lang==='fr'?g.nameFR:g.nameEN)}</div><div class="ghint2">« ${esc(lang==='fr'?g.hintFR:g.hintEN)} »</div>${g.descFR?`<button class="gdescbtn" id="gdesc">📖 ${t('giftDesc')}</button>`:''}${g.url?`<a class="glink" href="${g.url}" target="_blank" rel="noopener">${t('giftSee')}</a>`:''}</div>`;
+    rv.classList.add('on');
+    const gd=$("#gdesc");if(gd)gd.onclick=()=>openGiftDesc(g);
+    if(revealed.size===n){
+      spinBtn.style.display='none';$("#giftsdone").classList.add('on');
+      setTimeout(()=>{floatEmojis(['🎁','🎉','💛','🧦','🪂','⛺','💚','🏃‍♀️','⛰️','✨'],40);try{bigBurst();}catch(_){}},250);
+    }else{spinBtn.disabled=false;spinBtn.textContent='🎡 '+t('giftSpinAgain');}
+  }
+  function spin(){
+    if(spinning)return;const rem=G.map((g,i)=>i).filter(i=>!revealed.has(i));if(!rem.length)return;
+    spinning=true;spinBtn.disabled=true;$("#wreveal").classList.remove('on');
+    const i=rem[Math.floor(Math.random()*rem.length)];
+    const targetMod=(360-(i*seg+seg/2)+360)%360,curMod=((rot%360)+360)%360,delta=(targetMod-curMod+360)%360;
+    rot=rot+360*4+delta;wheel.style.transform=`rotate(${rot}deg)`;
+    setTimeout(()=>{spinning=false;reveal(i);},3700);
+  }
+  spinBtn.onclick=spin;
   $("#giftsBack").onclick=()=>{S.view="finish";render();};
 }
 function bookStats(){return {total:S.total||+localStorage.getItem('tl_total')||0,km:S.km||+localStorage.getItem('tl_km')||0,dplus:S.dplus||+localStorage.getItem('tl_dplus')||0};}
