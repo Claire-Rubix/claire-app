@@ -260,7 +260,8 @@
 /* =========================== CONFIG =========================== */
 const CONFIG = {
   portrait:"LN/Laurina.jpg",
-  password:"LAURINA2026",   // code d'acces au JEU (surprise). La page /#mot reste libre (sans code).
+  password:"",   // VIDE = jeu ouvert a tous (pas de mot de passe d'entree).
+  lettersCode:"LAURINA2026",   // code pour REVELER les lettres (mots de l'equipe) sur l'ecran de fin.
   adminCode:"CLAIRE2026",   // code prive pour /#liste (lire tous les mots) - juste pour Claire.
   bookCode:"PARTIETROPTOT",   // code du LIVRE SOUVENIR, revele sur la derniere page (apres avoir joue).
   introVideo:"LN/Test.mp4",
@@ -448,6 +449,7 @@ const I18N={
     cnpsKicker:"Et maintenant, ton cNPS",cnpsTitle:"Colleague Net Promoter Score de Laurina",
     cnpsSub:"Pour une fois, c'est TOI qu'on évalue. Note collective :",cnpsScoreWord:"sur 10 : promotrice à vie 💛",
     cnpsLetters:"Tes lettres à ouvrir 💌",cnpsOpenHint:"Clique sur une enveloppe pour lire le mot.",cnpsEmpty:"Les mots de tes collègues apparaîtront ici. 💌",
+    lettersLockTxt:"Les petits mots de l'équipe sont une surprise 🤫 Entre le code pour les lire :",lettersLockBtn:"Voir les lettres 💌",lettersLockBad:"Code incorrect.",
     cagnotte:"La cagnotte 🎁",replay:"Refaire le trail",galleryTitle:"Tous les souvenirs",timeUp:"⏱️ Temps écoulé !",printBook:"Imprimer le livre 📖",
     bestLbl:"Meilleur score",newRec:"🏆 Nouveau record !",
     giftsBtn:"🎁 Découvre tes cadeaux",giftsTitle:"Tes cadeaux",giftsIntro:"Tourne la roue pour découvrir tes cadeaux un par un !",giftSpin:"Tourner la roue",giftSpinAgain:"Tourner encore",giftDesc:"Voir la description",giftSee:"Voir le cadeau ↗",giftsBack:"← Retour",
@@ -469,6 +471,7 @@ const I18N={
     cnpsKicker:"And now, your cNPS",cnpsTitle:"Laurina's Colleague Net Promoter Score",
     cnpsSub:"For once, YOU are the one being rated. Collective score:",cnpsScoreWord:"out of 10: promoter for life 💛",
     cnpsLetters:"Your letters to open 💌",cnpsOpenHint:"Click an envelope to read the note.",cnpsEmpty:"Your colleagues' words will appear here. 💌",
+    lettersLockTxt:"The team's notes are a surprise 🤫 Enter the code to read them:",lettersLockBtn:"See the letters 💌",lettersLockBad:"Wrong code.",
     cagnotte:"The gift fund 🎁",replay:"Run it again",galleryTitle:"All the memories",timeUp:"⏱️ Time's up!",printBook:"Print the memory book 📖",
     bestLbl:"Best score",newRec:"🏆 New record!",
     giftsBtn:"🎁 Discover your gifts",giftsTitle:"Your gifts",giftsIntro:"Spin the wheel to discover your gifts one by one!",giftSpin:"Spin the wheel",giftSpinAgain:"Spin again",giftDesc:"See the description",giftSee:"See the gift ↗",giftsBack:"← Back",
@@ -976,8 +979,9 @@ function finish(){
       <span class="kicker">${t('cnpsKicker')}</span><h2>${t('cnpsTitle')}</h2><p class="muted">${t('cnpsSub')}</p>
       <div class="npsbig"><span class="num" id="cnpsavg">·</span><span class="muted">${t('cnpsScoreWord')}</span></div>
       <h2 style="margin-top:18px">${t('cnpsLetters')}</h2>
-      <p class="muted" style="margin-top:-6px">${t('cnpsOpenHint')}</p>
-      <div class="letters" id="letters"><p class="muted">${t('cnpsEmpty')}</p></div></div>
+      <div id="lettersgate"></div>
+      <p class="muted" id="lettersHint" style="margin-top:-6px;display:none">${t('cnpsOpenHint')}</p>
+      <div class="letters" id="letters" style="display:none"></div></div>
     <details class="acc"><summary>📊 ${lang==='fr'?'Détail du parcours':'Trail details'}</summary><div class="accbody"><div class="wall" style="text-align:left">${recap}</div></div></details>${gallery}
     ${CONFIG.bookCode?`<div style="margin-top:22px;padding:14px;border:2px dashed var(--gold);border-radius:14px;background:#fffdf2"><p class="muted" style="margin:0">📖 ${lang==='fr'?'Code de ton <b>livre souvenir</b> (à garder pour le rouvrir quand tu veux)':'Your <b>memory book</b> code (keep it to reopen anytime)'} :</p><div style="font-size:1.4em;font-weight:bold;letter-spacing:2px;color:var(--navy);margin-top:6px">${CONFIG.bookCode}</div></div>`:''}
     ${giftsCTA}
@@ -985,7 +989,25 @@ function finish(){
   const tg=$("#toGifts");if(tg)tg.onclick=()=>{S.view="gifts";render();};
   $("#printBook").onclick=printBook;
   $("#replay").onclick=()=>{if(S.timer)clearInterval(S.timer);S={view:"intro",current:0,done:{},scores:{},km:0,dplus:0,total:0,timer:null,raph:{},lastShown:null,ravSeen:{}};render();};
-  loadLetters();
+  setupLetters();
+}
+function lettersUnlocked(){return !CONFIG.lettersCode||sessionStorage.getItem('tl_letters')==='1';}
+function setupLetters(){
+  const gate=$("#lettersgate"),box=$("#letters"),hint=$("#lettersHint");
+  if(lettersUnlocked()){
+    if(gate)gate.innerHTML='';
+    if(hint)hint.style.display='';
+    if(box){box.style.display='';box.innerHTML=`<p class="muted">${t('cnpsEmpty')}</p>`;}
+    loadLetters();return;
+  }
+  if(box)box.style.display='none';if(hint)hint.style.display='none';
+  if(gate)gate.innerHTML=`<div style="background:#fffdf2;border:2px dashed var(--gold);border-radius:14px;padding:16px;margin-top:8px;text-align:center">
+    <p class="muted" style="margin:0 0 10px">🔒 ${t('lettersLockTxt')}</p>
+    <input type="password" id="lpw" style="text-transform:none;letter-spacing:1px;text-align:center;max-width:220px" placeholder="Code" autocomplete="off">
+    <div id="lgfb" style="color:var(--bad);font-weight:bold;margin-top:6px"></div>
+    <div class="row" style="justify-content:center;margin-top:8px"><button class="btn sm" id="lgo">${t('lettersLockBtn')}</button></div></div>`;
+  const tryp=()=>{if((($("#lpw")||{}).value||'').trim().toUpperCase()===String(CONFIG.lettersCode).toUpperCase()){sessionStorage.setItem('tl_letters','1');setupLetters();}else{const f=$("#lgfb");if(f)f.textContent=t('lettersLockBad');const p=$("#lpw");if(p)p.value='';}};
+  const go=$("#lgo");if(go)go.onclick=tryp;const pw=$("#lpw");if(pw){pw.addEventListener('keydown',e=>{if(e.key==='Enter')tryp();});pw.focus();}
 }
 function floatEmojis(list,n){n=n||32;for(let i=0;i<n;i++){const s=document.createElement('span');s.className='floatemo';s.textContent=list[i%list.length];
   s.style.left=(Math.random()*96)+'vw';s.style.fontSize=(1.4+Math.random()*2)+'em';
