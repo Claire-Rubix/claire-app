@@ -112,6 +112,35 @@
   .lmwho{font-weight:bold;color:var(--navy);font-size:1.35em;margin-top:2px}
   .lmscore{display:inline-block;background:var(--navy);color:var(--gold);border-radius:999px;padding:3px 12px;font-size:.82em;font-weight:bold;margin:10px 0}
   .lmnote{margin-top:8px;line-height:1.55;color:var(--ink);text-align:left;white-space:pre-wrap;font-size:1.02em}
+  /* cadeaux */
+  .gifts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
+  @media(max-width:560px){.gifts{grid-template-columns:1fr}}
+  .gift{position:relative;border-radius:18px;padding:22px 18px;text-align:center;cursor:pointer;overflow:hidden;background:linear-gradient(155deg,#0a2d6e,#143a78);color:#fff;border:2px solid var(--gold);box-shadow:0 12px 28px rgba(0,0,0,.32);transition:transform .2s;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gift::after{content:"";position:absolute;top:-60%;left:-30%;width:60%;height:220%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:rotate(20deg);animation:giftshine 3.4s ease-in-out infinite}
+  @keyframes giftshine{0%{left:-40%}60%,100%{left:130%}}
+  .gift:hover{transform:translateY(-4px)}
+  .gift .gbox{font-size:3.6em;line-height:1;animation:giftbob 2.2s ease-in-out infinite}
+  @keyframes giftbob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+  .gift .ghint{margin-top:10px;font-style:italic;color:#ffe9a8;font-size:.96em}
+  .gift .gopen{margin-top:14px;background:var(--gold);color:var(--navy);font-weight:bold;border-radius:999px;padding:7px 18px;font-size:.84em}
+  .gift .reveal{display:none}
+  .gift.opened{background:#fff;color:var(--ink);border-color:var(--gold)}
+  .gift.opened::after{display:none}
+  .gift.opened .wrap{display:none}
+  .gift.opened .reveal{display:flex;flex-direction:column;align-items:center;animation:pop .45s cubic-bezier(.2,.9,.3,1.3)}
+  .gift.opened .gbox{animation:giftpop .5s;font-size:4em}
+  @keyframes giftpop{0%{transform:scale(.3) rotate(-20deg)}70%{transform:scale(1.15) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
+  .gift .gname{font-weight:bold;color:var(--navy);font-size:1.12em;margin-top:8px;line-height:1.2}
+  .gift .ghint2{margin-top:6px;font-style:italic;color:#8a6d1a;font-size:.92em}
+  .gift .glink{margin-top:12px;background:var(--navy);color:var(--gold);text-decoration:none;border-radius:999px;padding:8px 18px;font-weight:bold;font-size:.85em}
+  .gift .glink:hover{filter:brightness(1.15)}
+  /* accordeons */
+  details.acc{margin-top:14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+  details.acc>summary{cursor:pointer;list-style:none;padding:13px 16px;font-weight:bold;color:var(--navy);background:#f4f7fc;user-select:none}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary::after{content:"▾";float:right;transition:transform .2s}
+  details.acc[open]>summary::after{transform:rotate(180deg)}
+  details.acc>.accbody{padding:14px 16px}
   .help{font-size:.78em;color:#5b6b86;margin-top:18px;border-top:1px dashed var(--line);padding-top:12px}
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
   /* intro */
@@ -346,6 +375,19 @@ const CONFIG = {
   // cNPS : VIDE au depart -> seuls les vrais mots envoyes apparaissent (aucun mot invente).
   cnps:[],
 
+  gifts:[
+    { icon:"🧦", nameFR:"Chaussettes de sport surprise", nameEN:"Surprise sports socks",
+      hintFR:"pour courir toujours avec nous", hintEN:"to always run with us", url:"" },
+    { icon:"🪂", nameFR:"Baptême de parapente — Chamonix Mont-Blanc", nameEN:"Paragliding flight — Chamonix Mont-Blanc",
+      hintFR:"pour couper avec sérénité", hintEN:"to switch off with serenity",
+      url:"https://www.sport-decouverte.com/bapteme-parapente-chamonix-mont-blanc.html" },
+    { icon:"⛺", nameFR:"Tarp de trekking MT900 (Decathlon)", nameEN:"MT900 trekking tarp (Decathlon)",
+      hintFR:"pour des aventures en famille", hintEN:"for family adventures",
+      url:"https://www.decathlon.fr/p/tarp-de-trekking-1-5-places-mt900/305779/m8545743" },
+    { icon:"💚👕", nameFR:"Un maillot de l'AS Saint-Étienne", nameEN:"An AS Saint-Étienne jersey",
+      hintFR:"un changement de vie qui implique de grandes responsabilités", hintEN:"a life change that comes with big responsibilities", url:"" }
+  ],
+
   galleryPhotos:[
     "LN/Photo équipe Juillet 2023.jpg","LN/Photo équipe 070224 fun.jpg","LN/854824db-7419-4311-8be1-eccd2b7704a2 (1).jpg",
     "LN/DSC00358 1 (1).JPG","LN/DSC00367 1 (1).JPG","LN/Run in Lyon - Départ - 061024 (1).JPG",
@@ -389,6 +431,7 @@ const I18N={
     cnpsLetters:"Tes lettres à ouvrir 💌",cnpsOpenHint:"Clique sur une enveloppe pour lire le mot.",cnpsEmpty:"Les mots de tes collègues apparaîtront ici. 💌",
     cagnotte:"La cagnotte 🎁",replay:"Refaire le trail",galleryTitle:"Tous les souvenirs",timeUp:"⏱️ Temps écoulé !",printBook:"Imprimer le livre 📖",
     bestLbl:"Meilleur score",newRec:"🏆 Nouveau record !",
+    giftsBtn:"🎁 Découvre tes cadeaux",giftsTitle:"Tes cadeaux 🎁",giftsIntro:"Le trail est terminé… place aux cadeaux ! Clique sur chaque boîte pour la déballer.",giftOpen:"Ouvrir 🎁",giftSee:"Voir le cadeau ↗",giftsBack:"← Retour",
     awBtn:"✍️ Ajouter un mot",awTitle:"Laisse un mot doux à Laurina",awName:"Ton prénom",awMsg:"Ton petit mot",awScore:"Ta note cNPS",
     awSend:"Envoyer 💌",awBack:"← Retour",awThanks:"Merci ! Ton mot apparaîtra à la fin du trail de Laurina. 💛",awErr:"Oups, envoi impossible. Réessaie.",awEmpty:"Écris au moins ton prénom et un petit mot.",
     introSkip:"Passer l'intro ▶︎",introStart:"Commencer l'aventure 🥾",
@@ -409,6 +452,7 @@ const I18N={
     cnpsLetters:"Your letters to open 💌",cnpsOpenHint:"Click an envelope to read the note.",cnpsEmpty:"Your colleagues' words will appear here. 💌",
     cagnotte:"The gift fund 🎁",replay:"Run it again",galleryTitle:"All the memories",timeUp:"⏱️ Time's up!",printBook:"Print the memory book 📖",
     bestLbl:"Best score",newRec:"🏆 New record!",
+    giftsBtn:"🎁 Discover your gifts",giftsTitle:"Your gifts 🎁",giftsIntro:"The trail is over… time for gifts! Click each box to unwrap it.",giftOpen:"Open 🎁",giftSee:"See the gift ↗",giftsBack:"← Back",
     awBtn:"✍️ Add a word",awTitle:"Leave a sweet word for Laurina",awName:"Your first name",awMsg:"Your little note",awScore:"Your cNPS score",
     awSend:"Send 💌",awBack:"← Back",awThanks:"Thank you! Your note will appear at the end of Laurina's trail. 💛",awErr:"Oops, couldn't send. Try again.",awEmpty:"Write at least your first name and a note.",
     introSkip:"Skip intro ▶︎",introStart:"Start the adventure 🥾",
@@ -439,7 +483,7 @@ $("#lightbox").onclick=()=>$("#lightbox").classList.remove("on");
 function faceImg(path){return `<img src="${src(path)}" onerror="this.style.display='none'">`;}
 
 /* =========================== ROUTER =========================== */
-function gateOK(){return S.motMode||S.view==='motslist'||!CONFIG.password||S.view==='addword'||sessionStorage.getItem("tl_ok")==="1";}
+function gateOK(){return S.preview||S.motMode||S.view==='motslist'||!CONFIG.password||S.view==='addword'||sessionStorage.getItem("tl_ok")==="1";}
 function showGate(){
   stage.innerHTML=`<div class="card" style="max-width:420px;margin:30px auto;text-align:center">
     <span class="kicker">🔒 ${lang==='fr'?'Accès':'Access'}</span><h2>${lang==='fr'?'Mot de passe':'Password'}</h2>
@@ -455,6 +499,7 @@ function render(){
   pickMusic(S.view);
   const bb=document.getElementById('bookBtn');if(bb)bb.style.display=(!S.motMode&&localStorage.getItem('tl_done')==='1')?'':'none';
   if(S.view==='book')return bookView();
+  if(S.view==='gifts')return gifts();
   if(S.view==='intro')return intro();
   if(S.view==='map')return world();
   if(S.view==='play')return play();
@@ -885,12 +930,13 @@ function finish(){
   const MAX=R.length*1000;const pct=Math.min(100,Math.round(S.total/MAX*100));
   const prevBest=getBest();const isRec=S.total>prevBest;const best=Math.max(prevBest,S.total);
   if(isRec)setBest(S.total);
-  saveScore({who:'Laurina',total:S.total,pct,km:S.km,steps:Object.keys(S.done).length});
+  if(!S.preview)saveScore({who:'Laurina',total:S.total,pct,km:S.km,steps:Object.keys(S.done).length});
   try{localStorage.setItem('tl_done','1');localStorage.setItem('tl_total',S.total);localStorage.setItem('tl_km',S.km);localStorage.setItem('tl_dplus',S.dplus);}catch(e){}
   const bbtn=document.getElementById('bookBtn');if(bbtn&&!S.motMode)bbtn.style.display='';
   const rank=pct>=90?(lang==='fr'?'🏆 Légende du trail':'🏆 Trail legend'):pct>=70?(lang==='fr'?'⛰️ Traileuse confirmée':'⛰️ Seasoned trailer'):pct>=50?(lang==='fr'?'🏃 Bonne grimpeuse':'🏃 Good climber'):(lang==='fr'?'🥾 En rodage':'🥾 Warming up');
   const recap=R.map(x=>`<div class="msg"><div class="who">${esc(x.who)} · ${x.km} km · +${x.dplus} m</div><b>${S.scores[x.id]||0}</b> / 1000 pts</div>`).join("");
-  const gallery=`<h2 style="margin-top:20px">${t('galleryTitle')}</h2><div class="gallery">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}" onclick="openLB(this.src)" onerror="this.style.display='none'">`).join("")}</div>`;
+  const gallery=`<details class="acc"><summary>📸 ${t('galleryTitle')}</summary><div class="accbody"><div class="gallery">${CONFIG.galleryPhotos.map(p=>`<img src="${src(p)}" onclick="openLB(this.src)" onerror="this.style.display='none'">`).join("")}</div></div></details>`;
+  const giftsCTA=(CONFIG.gifts&&CONFIG.gifts.length)?`<div style="margin-top:24px"><button class="btn" id="toGifts" style="font-size:1.12em;padding:16px 26px">${t('giftsBtn')}</button></div>`:'';
   const cagnotte=CONFIG.cagnotteURL?`<a class="btn" href="${CONFIG.cagnotteURL}" target="_blank" style="text-decoration:none">${t('cagnotte')}</a>`:"";
   stage.innerHTML=hud()+`<div class="card" style="text-align:center">
     <span class="kicker">${t('finishKicker')}</span><div class="medal">🏅</div>
@@ -907,12 +953,30 @@ function finish(){
       <h2 style="margin-top:18px">${t('cnpsLetters')}</h2>
       <p class="muted" style="margin-top:-6px">${t('cnpsOpenHint')}</p>
       <div class="letters" id="letters"><p class="muted">${t('cnpsEmpty')}</p></div></div>
-    <h2 style="margin-top:24px;text-align:left">${t('recap')}</h2><div class="wall" style="text-align:left">${recap}</div>${gallery}
+    <details class="acc"><summary>📊 ${lang==='fr'?'Détail du parcours':'Trail details'}</summary><div class="accbody"><div class="wall" style="text-align:left">${recap}</div></div></details>${gallery}
     ${CONFIG.bookCode?`<div style="margin-top:22px;padding:14px;border:2px dashed var(--gold);border-radius:14px;background:#fffdf2"><p class="muted" style="margin:0">📖 ${lang==='fr'?'Code de ton <b>livre souvenir</b> (à garder pour le rouvrir quand tu veux)':'Your <b>memory book</b> code (keep it to reopen anytime)'} :</p><div style="font-size:1.4em;font-weight:bold;letter-spacing:2px;color:var(--navy);margin-top:6px">${CONFIG.bookCode}</div></div>`:''}
-    <div class="row" style="justify-content:center">${cagnotte}<button class="btn ghost" id="printBook">${t('printBook')}</button><button class="btn ghost" id="replay">${t('replay')}</button></div></div>`;
+    ${giftsCTA}
+    <div class="row" style="justify-content:center;margin-top:10px">${cagnotte}<button class="btn ghost" id="printBook">${t('printBook')}</button><button class="btn ghost" id="replay">${t('replay')}</button></div></div>`;
+  const tg=$("#toGifts");if(tg)tg.onclick=()=>{S.view="gifts";render();};
   $("#printBook").onclick=printBook;
   $("#replay").onclick=()=>{if(S.timer)clearInterval(S.timer);S={view:"intro",current:0,done:{},scores:{},km:0,dplus:0,total:0,timer:null,raph:{},lastShown:null,ravSeen:{}};render();};
   loadLetters();
+}
+function gifts(){
+  const G=CONFIG.gifts||[];
+  stage.innerHTML=hud()+`<div class="card" style="text-align:center">
+    <span class="kicker">🎁</span><h1>${t('giftsTitle')}</h1>
+    <p class="muted">${t('giftsIntro')}</p>
+    <div class="gifts">${G.map((g,i)=>`<div class="gift" data-i="${i}">
+      <div class="wrap"><div class="gbox">🎁</div><div class="ghint">« ${esc(lang==='fr'?g.hintFR:g.hintEN)} »</div><div class="gopen">${t('giftOpen')}</div></div>
+      <div class="reveal"><div class="gbox">${g.icon}</div><div class="gname">${esc(lang==='fr'?g.nameFR:g.nameEN)}</div><div class="ghint2">« ${esc(lang==='fr'?g.hintFR:g.hintEN)} »</div>${g.url?`<a class="glink" href="${g.url}" target="_blank" rel="noopener">${t('giftSee')}</a>`:''}</div></div>`).join("")}</div>
+    <div class="row" style="justify-content:center;margin-top:20px"><button class="btn ghost" id="giftsBack">${t('giftsBack')}</button></div></div>`;
+  stage.querySelectorAll('.gift').forEach(el=>{el.addEventListener('click',e=>{
+    if(el.classList.contains('opened'))return;
+    if(e.target.tagName==='A')return;
+    el.classList.add('opened');burst(20);try{sfx('good');}catch(_){}
+  });});
+  $("#giftsBack").onclick=()=>{S.view="finish";render();};
 }
 function bookStats(){return {total:S.total||+localStorage.getItem('tl_total')||0,km:S.km||+localStorage.getItem('tl_km')||0,dplus:S.dplus||+localStorage.getItem('tl_dplus')||0};}
 async function printBook(){
@@ -1093,6 +1157,7 @@ initMusic();
 if(location.hash==="#clear"){try{localStorage.removeItem('mots_laurina');alert('Notes locales effacées.');}catch(e){}location.hash='';}
 if(location.hash==="#mot"){S.motMode=true;S.view="addword";}
 if(location.hash==="#liste")S.view="motslist";
+if(location.hash==="#fin"||location.hash==="#gifts"){const R=CONFIG.ravitos;S.done={};S.scores={};S.km=0;S.dplus=0;R.forEach(r=>{S.done[r.id]=true;S.scores[r.id]=800;S.km+=r.km;S.dplus+=r.dplus;});S.total=R.length*800;S.preview=true;S.view=(location.hash==="#gifts")?"gifts":"finish";}
 if(S.motMode){['restartBtn','musicBtn','presBtn','cd'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none';});const br=document.querySelector('.brand');if(br)br.style.display='none';}
 else document.addEventListener("pointerdown",()=>toggleMusic(true),{once:true});
 setLang("fr");render();updateCountdown();setInterval(updateCountdown,1000);
