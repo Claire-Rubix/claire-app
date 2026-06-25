@@ -382,7 +382,10 @@ const CONFIG = {
 
   gifts:[
     { icon:"🧦", nameFR:"Chaussettes de sport surprise", nameEN:"Surprise sports socks",
-      hintFR:"pour courir toujours avec nous", hintEN:"to always run with us", url:"" },
+      hintFR:"pour courir toujours avec nous", hintEN:"to always run with us", url:"",
+      descFR:"🗓️ La surprise est en route : elles arriveront avant le 8 juillet !", descEN:"🗓️ The surprise is on its way: arriving before July 8!" },
+    { icon:"⛺", nameFR:"Tarp de trekking MT900 (Decathlon)", nameEN:"MT900 trekking tarp (Decathlon)",
+      hintFR:"pour des aventures en famille", hintEN:"for family adventures", url:"" },
     { icon:"🪂", nameFR:"Baptême de parapente — Chamonix Mont-Blanc", nameEN:"Paragliding flight — Chamonix Mont-Blanc",
       hintFR:"pour couper avec sérénité", hintEN:"to switch off with serenity", url:"", img:"LN/parapente.jpg",
       descFR:`Les monts enneigés de Chamonix en parapente
@@ -400,8 +403,6 @@ Votre programme
 
 À partir de 4 ans, mineurs avec autorisation parentale. Poids max. 100 kg. Casque fourni. Prévoir 2h d'activité au total.`,
       descEN:`Snow-capped Chamonix peaks by paraglider. A 20-min discovery flight (Plan de Praz, 1100 m drop): the valley, Mont Blanc, Les Drus, the glaciers, the Aiguille du Midi and the whole Mont-Blanc massif. Greeted by your instructor, geared up and briefed, a short run to take off, then a smooth glide and gentle landing. From age 4, max 100 kg, helmet provided, allow 2h.` },
-    { icon:"⛺", nameFR:"Tarp de trekking MT900 (Decathlon)", nameEN:"MT900 trekking tarp (Decathlon)",
-      hintFR:"pour des aventures en famille", hintEN:"for family adventures", url:"" },
     { icon:"💚👕", nameFR:"Un maillot de l'AS Saint-Étienne", nameEN:"An AS Saint-Étienne jersey",
       hintFR:"un changement de vie qui implique de grandes responsabilités", hintEN:"a life change that comes with big responsibilities", url:"" }
   ],
@@ -1003,7 +1004,7 @@ function openGiftReveal(g,col,onDiscover,onClose){
     m.innerHTML=`<div class="lmcard" style="border-top:7px solid ${col}"><button class="lmclose">✕</button>
       <div class="gbox" style="font-size:3.4em">🎁</div>
       <div class="ghint2" style="font-size:1.12em;margin-top:12px">« ${hint} »</div>
-      <button class="gdescbtn" id="grveal" style="margin-top:16px">${lang==='fr'?'Découvrir le cadeau 🎁':'Reveal the gift 🎁'}</button></div>`;
+      <button class="btn" id="grveal" style="margin-top:18px">${lang==='fr'?'Découvrir le cadeau 🎁':'Reveal the gift 🎁'}</button></div>`;
     wireX();const r=m.querySelector('#grveal');if(r)r.onclick=step2;
   }
   function step2(){
@@ -1046,7 +1047,7 @@ function gifts(){
   function spin(){
     if(spinning)return;const rem=G.map((g,i)=>i).filter(i=>!revealed.has(i));if(!rem.length)return;
     spinning=true;spinBtn.disabled=true;
-    const i=rem[Math.floor(Math.random()*rem.length)];
+    const i=rem[0]; /* faux hasard : ordre fixe des cadeaux */
     const targetMod=(360-(i*seg+seg/2)+360)%360,curMod=((rot%360)+360)%360,delta=(targetMod-curMod+360)%360;
     rot=rot+360*4+delta;wheel.style.transform=`rotate(${rot}deg)`;
     setTimeout(()=>{spinning=false;reveal(i);},3700);
