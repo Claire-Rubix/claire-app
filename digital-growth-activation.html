@@ -179,7 +179,10 @@
   .member .nm{font-weight:800;font-size:clamp(15px,1.7vw,22px);}
   .member .rl{font-size:clamp(11px,1.25vw,15px);color:var(--muted);line-height:1.35;max-width:20ch;}
 
-  .closewrap{display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .closewrap{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,3vh,34px);}
+  .scene[data-i="7"] .logoimg{height:clamp(44px,6.5vw,88px);}
+  .scene[data-i="7"] .lead{font-size:clamp(26px,4vw,54px);max-width:20ch;line-height:1.12;font-weight:800;}
+  .scene[data-i="7"] .tagline{font-size:clamp(17px,2.2vw,30px);gap:clamp(20px,3.2vw,48px);}
 
   /* ===== multi-directional entrances ===== */
   .fl,.fr,.ft,.fb,.pop,.spin,.anim{opacity:0;}
