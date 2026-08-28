@@ -121,18 +121,18 @@
 
   .flow{display:flex;align-items:stretch;gap:clamp(6px,.8vw,12px);flex-wrap:wrap;justify-content:center;}
   .step{position:relative;overflow:hidden;min-width:clamp(150px,18vw,250px);padding:clamp(18px,2.4vh,30px) clamp(16px,1.8vw,26px);border-radius:8px;border:1px solid var(--line);border-top:3px solid var(--line);
-    background:var(--panel);display:flex;flex-direction:column;gap:6px;align-items:center;}
+    background:var(--panel);display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;min-height:clamp(155px,27vh,250px);}
   .step .se{font-size:clamp(32px,3.8vw,50px);line-height:1;}
   .stepbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;border:0;}
-  .step-ov{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,20,55,.5),rgba(5,20,55,.76));}
+  .step-ov{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,20,55,.36),rgba(5,20,55,.62));}
   .step .t,.step .d{position:relative;z-index:2;}
   .step .d{color:#C7D6F2;}
-  .step .t{font-weight:800;font-size:clamp(13px,1.5vw,19px);letter-spacing:.03em;}
+  .step .t{font-weight:800;font-size:clamp(15px,1.7vw,23px);letter-spacing:.03em;}
   .step .d{font-size:clamp(10px,1.05vw,13px);color:var(--muted);line-height:1.3;}
-  .step.core{background:linear-gradient(180deg,rgba(255,215,0,.2),rgba(255,215,0,.06));border-color:var(--gold-tint);border-top:3px solid var(--gold);}
+  .step.core{background:linear-gradient(180deg,rgba(255,215,0,.16),rgba(255,215,0,.04));border:2px solid var(--gold);box-shadow:0 0 0 3px rgba(255,215,0,.22),0 14px 34px rgba(0,0,0,.5);min-width:clamp(210px,26vw,360px);padding:clamp(22px,3vh,38px) clamp(20px,2.2vw,32px);z-index:2;}
   .st-a{border-top-color:var(--blue);}
   .st-s{border-top-color:var(--green);}
-  .step.core .t{color:var(--gold);}
+  .step.core .t{color:var(--gold);font-size:clamp(17px,2vw,27px);}
   .arrow{align-self:center;color:var(--gold);font-size:clamp(18px,2.2vw,28px);font-weight:900;}
   .foundation{padding:12px 26px;border-radius:7px;background:var(--gold-tint);border:1px solid var(--gold-tint);
     font-size:clamp(12px,1.35vw,16px);font-weight:800;display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;}
