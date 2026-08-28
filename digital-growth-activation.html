@@ -277,13 +277,13 @@
       <div class="eyebrow ft" style="--d:.05s">What changes</div>
       <h2 class="ft" style="--d:.2s">One coordinated motion, by objective</h2>
       <div class="flow" style="margin-top:8px">
-        <div class="step st-a fl" style="--d:.8s"><span class="se">🧲</span><span class="t">ATTRACT</span><span class="d">SEO &amp; SEA bring them in</span></div>
-        <span class="arrow pop" style="--d:1s">→</span>
-        <div class="step core ft" style="--d:1.15s"><span class="se rocketup">🚀</span><span class="t">GROWTH &amp; ACTIVATION</span><span class="d">engage, mature, score &amp; convert</span></div>
+        <div class="step st-a fl" style="--d:.9s"><span class="se">🧲</span><span class="t">ATTRACT</span><span class="d">SEO &amp; SEA bring them in</span></div>
         <span class="arrow pop" style="--d:1.5s">→</span>
-        <div class="step st-s fr" style="--d:1.65s"><span class="se">🤝</span><span class="t">SALES</span><span class="d">handed over with the data</span></div>
+        <div class="step core ft" style="--d:1.9s"><span class="se rocketup">🚀</span><span class="t">GROWTH &amp; ACTIVATION</span><span class="d">engage, mature, score &amp; convert</span></div>
+        <span class="arrow pop" style="--d:2.7s">→</span>
+        <div class="step st-s fr" style="--d:3.1s"><span class="se">🤝</span><span class="t">SALES</span><span class="d">handed over with the data</span></div>
       </div>
-      <div class="foundation pop" style="--d:2.15s">🧭 <b>Data + VOC</b>, measured at every step</div>
+      <div class="foundation pop" style="--d:3.8s">🧭 <b>Data + VOC</b>, measured at every step</div>
     </section>
 
     <!-- 4 · where we sit (venn) -->
@@ -309,7 +309,7 @@
     <!-- 5 · group strategy -->
     <section class="scene" data-i="4">
       <div class="eyebrow ft" style="--d:.05s">Our mandate</div>
-      <h2 class="ft" style="--d:.2s">We deliver on the 2026 group plan</h2>
+      <h2 class="ft" style="--d:.2s">We deliver on the group plan</h2>
       <div class="cards" style="margin-top:12px">
         <div class="pcard fl" style="--d:.55s"><div class="badge lg">📈</div><div><div class="ct">Organic Growth</div><div class="cd">Digital leads, lifecycle activation, VOC &amp; Trade execution</div></div></div>
         <div class="pcard fr" style="--d:.8s"><div class="badge lg">🤖</div><div><div class="ct">Artificial Intelligence</div><div class="cd">AI use cases in the daily motion, teams brought on board</div></div></div>
@@ -399,7 +399,7 @@
 
 <script>
 (function(){
-  var DUR=[6,6,6,5,4,11,7,6].map(function(s){return s*1000;});
+  var DUR=[6,6,9,5,4,11,7,6].map(function(s){return s*1000;});
   var TOTAL=DUR.reduce(function(a,b){return a+b;},0);
   var START=[]; (function(){var a=0;for(var i=0;i<DUR.length;i++){START.push(a);a+=DUR[i];}})();
 
@@ -411,10 +411,9 @@
   var soundBtn=document.getElementById('soundBtn');
   var soundIco=document.getElementById('soundIco');
   var mutedIco=document.getElementById('mutedIco');
-  var soundOn=true;
+  var soundOn=true, audioUnlocked=false;
   soundIco.style.display='';mutedIco.style.display='none';
-  function tryAudio(){ if(soundOn){ bgm.play().catch(function(){}); } }
-  ['pointerdown','keydown','touchstart'].forEach(function(ev){ document.addEventListener(ev, function(){ tryAudio(); }, {once:true}); });
+  function firstGesture(){ if(audioUnlocked)return false; audioUnlocked=true; if(soundOn){bgm.play().catch(function(){});} if(!playing)play(); return true; }
 
   function syncBgm(){try{if(bgm.duration)bgm.currentTime=(lastE/1000)%bgm.duration;}catch(e){}}
   soundBtn.addEventListener('click',function(ev){
@@ -458,10 +457,11 @@
   }
   stage.addEventListener('click',function(ev){
     if(ev.target.closest('#soundBtn')||ev.target.closest('#replay'))return;
+    if(firstGesture())return;
     playing?pause():play();
   });
   document.getElementById('replayBtn').addEventListener('click',function(ev){ev.stopPropagation();restart();});
-  document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();playing?pause():play();}});
+  document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();if(firstGesture())return;playing?pause():play();}});
 
   // keep silo background clips to a short punchy loop (~6s)
   [].slice.call(document.querySelectorAll('.silobg,.stepbg,.scenebg,.closeclip')).forEach(function(v){
